@@ -1,0 +1,18 @@
+
+
+export class APIError extends Error
+{
+    constructor(statusCode, message, stack=null)
+    {
+        super(message)
+        this.statusCode = statusCode | 500
+        this.data = null
+        this.success = false
+
+
+        if(stack == null || !stack)
+        {
+            Error.captureStackTrace(this, this.constructor)
+        }
+    }
+}
