@@ -44,10 +44,14 @@ const UserSchema = new Schema(
     {
         type: String,
     },
-    role:
+    avatarPublicID:
     {
         type: String,
-        enum: ["admin", "doctor", "receptionist", "patient"],default: "patient"
+    },
+    role:
+    {
+        type: Array,
+        default: ["patient"]
     },
     receptionistField:
     {
@@ -140,12 +144,12 @@ const UserSchema = new Schema(
 )
 
 
-UserSchema.pre("save", async function(password)
+UserSchema.pre("save", async function()
 {
     
     if(!this.isModified('password')) return null
 
-    this.password = await bcrypt.hash(password, 15)
+    this.password = await bcrypt.hash(this.password, 15)
 
 })
 
@@ -158,7 +162,7 @@ UserSchema.methods.isPasswordCorrect = async function(password)
 
 UserSchema.methods.generateAccessToken = async function() 
 {
-    return jwt.sign(
+    return await jwt.sign(
     {
         _id: this._id,
         email: this.email,
@@ -175,7 +179,7 @@ UserSchema.methods.generateAccessToken = async function()
 
 UserSchema.methods.generateRefreshToken = async function()
 {
-    return jwt.sign(
+    return await jwt.sign(
     {
         _id: this._id,
         role: this.role

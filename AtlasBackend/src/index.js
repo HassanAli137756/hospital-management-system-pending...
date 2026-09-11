@@ -8,7 +8,7 @@ connectDB()
 {
     app.listen(process.env.PORT || 4000, () =>
     {
-        console.log("DB has connected Successfully at port", process.env.PORT);
+        console.log("Server listing at port ", process.env.PORT);
         
     }
     )

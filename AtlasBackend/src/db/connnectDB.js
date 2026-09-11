@@ -5,7 +5,6 @@ import {DB_NAME} from '../constansts.js'
 
 const connectDB = async () =>
 {
-    console.log("DB_URL", process.env.DB_URI);
     
     try
     {
