@@ -27,10 +27,11 @@ const generateAccessAndRefreshTokens = async (userId) =>
 const login = asyncHandler( async (req, res) =>
 {
     const userRefrence = req.body?.userRefrence?.toLowerCase()
+    const password = req.body?.password
 
-    if(!userRefrence)
+    if(!userRefrence?.trim() || !password?.trim())
     {
-        throw new APIError(400, "Please provide emial or user-name")
+        throw new APIError(400, "Please provide emial or user-name and password")
     }
 
     
@@ -43,6 +44,13 @@ const login = asyncHandler( async (req, res) =>
     if(!DBUser)
     {
         throw new APIError(404, "User with given credentials does not exist")
+    }
+
+    const ispasswordCorrect = await DBUser.isPasswordCorrect(password)
+
+    if(!ispasswordCorrect)
+    {
+        throw new APIError(500, "Password is invalid")
     }
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(DBUser._id)

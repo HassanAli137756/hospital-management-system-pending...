@@ -3,6 +3,12 @@ import mongoose, {Schema} from 'mongoose'
 
 const appointmentSchema = new Schema(
 {
+    createdBy:
+    {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
     userProfileId:
     {
         type: mongoose.Types.ObjectId,
@@ -12,16 +18,16 @@ const appointmentSchema = new Schema(
     {
         type:
         {
-            userName:
+            patientName:
             {
                 type: String,
                 required: true
             },
-            Email:
+            email:
             {
                 type: String
             },
-            CellNo:
+            cellNo:
             {
                 type: String
             }
@@ -32,16 +38,19 @@ const appointmentSchema = new Schema(
         type: String,
         required: true
     },
-    time:
+    times:
     {
-        type: String,
-        required: true
+        type:
+        {
+            time: String,
+            date: Date,
+            cancellingTime: Number,
+            remainingTime: Number,
+            
+
+        }
     },
-    date:
-    {
-        type: String,
-        required: true
-    },
+    
     forSession:
     {
         type: String,
@@ -49,11 +58,11 @@ const appointmentSchema = new Schema(
     },
     payment:
     {
-        type: String,
+        type: Number,
     },
     diagnoses:
     {
-        type: ""
+        type: String
     },
     cups:
     {
@@ -65,6 +74,7 @@ const appointmentSchema = new Schema(
         enum: ["pending", "done", "cancelled"],
         default: "pending"
     }
+    
 
 
 }
