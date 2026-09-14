@@ -53,6 +53,12 @@ const UserSchema = new Schema(
         type: Array,
         default: ["patient"]
     },
+    gender:
+    {
+        type: String,
+        enum: ["Male", "Female", "Others"],
+        default: "Male"
+    },
     receptionistField:
     {
         type:
@@ -62,24 +68,12 @@ const UserSchema = new Schema(
                 type:
                 {
                             
-                    allPaymentAccess:
+                    allPaymentAccess: 
                     {
-                        type: mongoose.Types.ObjectId
+                        type: Boolean,
+                        default: false
                     },
-                    allowedToUpdateStatus:
-                    [
-                        {
-                            type: mongoose.Types.ObjectId,
-                            ref: "User"
-                        }
-                    ],
-                    allowedDashboards:
-                    [
-                        {
-                            type: mongoose.Types.ObjectId,
-                            ref: "User"
-                        }
-                    ]
+                    allowedToUpdateStatus: [ String ],
                 }
             }
         }

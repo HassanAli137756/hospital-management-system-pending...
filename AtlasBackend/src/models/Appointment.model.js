@@ -9,10 +9,16 @@ const appointmentSchema = new Schema(
         ref: "User",
         required: true
     },
+    doneBy:
+    {
+        type: String,
+        default: "receptionist"
+    },
     userProfileId:
     {
         type: mongoose.Types.ObjectId,
-        ref: "User"
+        ref: "Profile",
+        required: true
     },
     generalPatientInfo:
     {
@@ -46,7 +52,7 @@ const appointmentSchema = new Schema(
             date: Date,
             cancellingTime: Number,
             remainingTime: Number,
-            
+            timeOfUpdation: Number
 
         }
     },
@@ -70,7 +76,7 @@ const appointmentSchema = new Schema(
     },
     status:
     {
-        typeof: String,
+        type: String,
         enum: ["pending", "done", "cancelled"],
         default: "pending"
     }

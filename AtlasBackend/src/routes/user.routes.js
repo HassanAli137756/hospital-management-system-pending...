@@ -8,11 +8,11 @@ import { asyncHandler } from '../utils/asyncHander.js'
 import {authMiddleware} from '../middlewares/authMiddleware.middleware.js'
 import { getCurrentUser } from '../controllers/user/getCurrentUser.controller.js'
 import {refreshingAccessToken} from '../controllers/user/refreshingAccessToken.controller.js'
+import { logout } from '../controllers/user/logout.controller.js'
 
 
 export const userRouter = express.Router()
 
-console.log("Uer Controller executed");
 
 
 /* TESTED */
@@ -41,6 +41,10 @@ userRouter.route('/get-current-user').get(authMiddleware, getCurrentUser)
 /* TESTED */
 userRouter.route('/refresh-tokens').post(refreshingAccessToken)
 
+
+
+/* TESTED */
+userRouter.route("/logout").post(authMiddleware, logout)
 
 
 userRouter.route()

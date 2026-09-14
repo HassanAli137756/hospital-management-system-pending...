@@ -9,6 +9,9 @@ const logout = asyncHandler( async (req, res) =>
 {
     const incommingRefreshToken = req.cookies?.refreshToken
 
+    console.log("Tokens", req.cookies);
+    
+
     if(!incommingRefreshToken)
     {
         throw new APIError(401, "Login session token is not found, it seems you have already logout")
@@ -46,10 +49,13 @@ const logout = asyncHandler( async (req, res) =>
     return res
     .status(200)
     .clearCookie("refreshToken", cookieOptions)
-    .cleareCookie("accessToken", cookieOptions)
+    .clearCookie("accessToken", cookieOptions)
     .json(
         new APIResponse(200, "Successfully logged-out")
     )
 
 
 })
+
+
+export {logout}

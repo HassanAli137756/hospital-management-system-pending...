@@ -1,21 +1,37 @@
-import { Appointment } from "../../models/Appointment.model";
+import { Appointment } from "../../models/Appointment.model.js";
+import { Profile } from "../../models/Profile.model.js";
 import { User } from "../../models/User.model.js";
 import {APIError} from '../../utils/apiError.js'
 import {APIResponse} from '../../utils/apiResponse.js'
 import {asyncHandler} from '../../utils/asyncHander.js'
 
+// TODO
+// TIME AVAILABILITY CHECKS
 
 
-const generateTimes = (appointmentRawDate, appointmentRawTime='') =>
+const generateTimes = (appointmentRawDate, appointmentRawTime) =>
 {
-    const date = new Date(appointmentRawDate)
-    const currentDate = new Date()
-    let todayHours = Number(appointmentRawTime.slice(0, 2)) - currentDate.getHours()
-    let totalDays = currentDate.getDate() - date.getDate()
-
-    let totalHours = 0
-
+    const presentDate = new Date()
+    const appointmentDate = new Date(appointmentRawDate)
     
+    const appointedTime = Number(appointmentRawTime.slice(0, 2))
+    const currentTime = presentDate.getHours()
+    const totalDays = presentDate.getDay() - appointmentDate.getDay()
+    let totalHours = 0
+    let todayHours = appointedTime - currentTime
+
+    if(totalDays > 1)
+    {
+        if(todayHours < 0)
+        {
+            todayHours = 24 + todayHours
+        }
+        else
+        {
+            todayHours = 24 - todayHours
+        }
+    }
+
     if(todayHours < 0  && totalDays == 1)
     {
         totalHours = (24 + todayHours) - 1
@@ -26,11 +42,16 @@ const generateTimes = (appointmentRawDate, appointmentRawTime='') =>
     }
     else if(totalDays > 1)
     {
-        todayHours = (totalDays * 24) - 1
+        totalHours = (((totalDays - 1) * 24) + todayHours) - 1
     }
 
 
-    const sessionRemainTime = totalHours * 60 * 1000
+
+    const sessionTimeLine = ((totalHours + 1) * 60 * 60 * 1000) + Date.now()
+    const cancellTimeLine = (totalHours * 60 * 60 * 1000) + Date.now()
+    const updationTimeLine = Date.now() + (15 * 60 * 1000)
+
+    return {sessionTimeLine, cancellTimeLine, updationTimeLine}
 }
 
 
@@ -38,37 +59,53 @@ const generateTimes = (appointmentRawDate, appointmentRawTime='') =>
 
 const addAppointment = asyncHandler( async (req, res) =>
 {
-    //                    FLOW
-    /* 
-    1. user should authorized, checking in req.user
-    2. time validations like if today is sunday
-    3. time sloting checking for availability
-    4. generating cancellingTime and remainingTime
-    */
-
     const 
     {
-        createdBy,
         patientName,
         email,
-        cellNo,
+        cellNo="",
         doctor,
         time,
         date,
         forSession,
         diagnoses,
-        patientId
+        patientId,
+        payment,
+        status="pending"
     } = req.body
 
-    const createrId = req?.user?._id
+    const creater = req.user
+    let profileId = patientId
 
-    if(createrId)
+    if(!creater?._id)
     {
         throw new APIError(401, "Please login to book an appointment")
     }
 
+    if(creater?.role === "patient")
+    {
+        const DBProfile = await Profile.findOne({patientAccount: patientId})
+
+        if(!DBProfile?._id)
+        {
+            const newProfile = await Profile.create({cellNo: cellNo, name: patientName, patientAccount: patientId})
+
+            if(!newProfile._id)
+            {
+                throw new APIError(500, "Failed to create new profile, try again")
+            }
+
+            profileId = newProfile._id
+
+        }
+        else
+        {
+            profileId = DBProfile._id
+        }
+    }
+
     if(
-        [patientName, doctor, time, date, forSession,]
+        [patientName, doctor, time, date, forSession, profileId]
         .some(field => !field || field?.trim() == "")
     )
     {
@@ -77,6 +114,7 @@ const addAppointment = asyncHandler( async (req, res) =>
     }
 
     const bookingDate = new Date(date)
+    const currentDate = new Date()
 
     if(bookingDate.toLocaleDateString("en-US", {weekday: "long"}).toLocaleLowerCase() === "sunday")
     {
@@ -85,9 +123,54 @@ const addAppointment = asyncHandler( async (req, res) =>
 
 
 
-    const DBUserId = await User.findOne({email}).select("_id").lean()
+    if(cellNo?.replace("-", "")?.length <= 12 && cellNo?.replace("-", "")?.length >= 12)
+    {
+        throw new APIError(400, "Enter a valid 11 digit phone number")
 
+    }
+
+  
+    const {cancellTimeLine, sessionTimeLine, updationTimeLine} = generateTimes(date, time)
     
 
 
+    const newAppointment = await Appointment.create(
+    {
+        createdBy: createrId,
+        diagnoses,
+        doctor,
+        payment,
+        forSession,
+        generalPatientInfo: 
+        {
+            cellNo: cellNo?.replace("-", ""),
+            email,
+            patientName
+        },
+        status,
+        times:
+        {
+            cancellingTime: cancellTimeLine,
+            date: bookingDate,
+            remainingTime: sessionTimeLine,
+            time: time,
+            timeOfUpdation: updationTimeLine
+        },
+        userProfileId: profileId
+    }
+    )
+
+
+    return res
+    .status(201)
+    .json(
+        new APIResponse(201, "Successfully booked an appointment", newAppointment)
+    )
+
+
+
 })
+
+
+
+export {addAppointment, generateTimes}
