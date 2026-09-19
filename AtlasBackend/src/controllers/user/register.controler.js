@@ -1,8 +1,9 @@
+import { Profile } from '../../models/Profile.model.js'
 import {User} from '../../models/User.model.js'
 import {APIError} from '../../utils/apiError.js'
 import {APIResponse} from '../../utils/apiResponse.js'
 import {asyncHandler} from '../../utils/asyncHander.js'
-import {uploadOnCloudinary} from '../../utils/cloudinary.js'
+import {removeFromCloudinary, uploadOnCloudinary} from '../../utils/cloudinary.js'
 
 
 const register = asyncHandler( async (req, res) =>
@@ -50,6 +51,8 @@ const register = asyncHandler( async (req, res) =>
 
 
 
+
+
     if(avatarBuffer)
     {
         const uploadingInstance = await uploadOnCloudinary(avatarBuffer)
@@ -64,13 +67,15 @@ const register = asyncHandler( async (req, res) =>
         uploadedAvatar = uploadingInstance
     }
 
+    
+
 
     const createdUser = await User.create(
     {
         address,
         avatar: uploadedAvatar ? uploadedAvatar.secure_url : "",
         avatarPublicID: uploadedAvatar ? uploadedAvatar.public_id : "",
-        cellNo,
+        cellNo: cellNo.replace("-", ""),
         email,
         fullName,
         password,
@@ -79,6 +84,43 @@ const register = asyncHandler( async (req, res) =>
     }
     )  
     
+    if(!createdUser?._id)
+    {
+        throw new APIError(500, "failed to register user");
+
+    }
+
+    
+    const userProfile = await Profile.findOne(
+    {
+        $or: [{cellNo: cellNo}, {patientAccount: createdUser._id}]
+    })
+
+    if(userProfile?._id)
+    {
+        if(!userProfile.patientAccount.toString().length > 0)
+        {
+            userProfile.patientAccount = createdUser._id
+            
+            await userProfile.save({validateBeforeSave: false})
+        }
+    }
+    else
+    {     
+        const userProfile = await Profile.create(
+        {
+            cellNo: cellNo.replace("-", ""),
+            name: fullName,
+            patientAccount: createdUser._id
+        })
+        if(!userProfile?._id)
+        {
+            await removeFromCloudinary(uploadedAvatar?.public_id)
+            await User.deleteOne({_id: createdUser._id})
+            throw new APIError(500, "failed to register user, as profile id was not created successfully");
+        }
+
+    }
     
 
     return res

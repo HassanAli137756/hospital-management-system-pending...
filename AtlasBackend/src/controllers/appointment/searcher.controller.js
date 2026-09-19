@@ -26,26 +26,43 @@ const appointmentSearcher = asyncHandler( async (req, res) =>
     */
 
     const user = req.user
-    const availableOptions = req.body || {}
+    const 
+    {
+        name,
+        email,
+        cellNo,
+        doctor,
+        forSession,
+        paymentBased=0,
+        diagnoses,
+        cups=0,
+        status,
+        starting="",
+        ending=""
+    } = req.body
 
-    const startingData = new Date()
-    const endingDate = new Date(startingData)
+    const presentDate = new Date()
 
-
-    endingDate.setDate(startingData.getDate() + 1)
-    startingData.setHours(0, 0, 0, 0)
+    let startingDate = new Date(presentDate)
+    let endingDate = new Date(startingDate)
+    endingDate.setDate(startingDate.getDate() + 1)
+    startingDate.setHours(0, 0, 0, 0)
     endingDate.setHours(0, 0, 0, 0)
 
     if(!user?._id)
     {
         throw new APIError(401, "Please login to see your history")
     }
-
+    
     const options = {}
 
-    if(user.role == "patient")
+    if(user.role == "doctor")
     {
-        const userProfile = await Profile.findById(user._id)
+        options.doctor = user?._id
+    }
+    else if(user.role == "patient")
+    {
+        const userProfile = await Profile.findOne({patientAccount: user?._id})
 
         if(!userProfile?._id)
         {
@@ -56,24 +73,123 @@ const appointmentSearcher = asyncHandler( async (req, res) =>
 
     }
 
-    
-    const fieldsSetter = (obj={}) =>
+
+    if(name?.trim || email?.trim  || cellNo?.trim  )
     {
-        Object.keys(obj).map(key =>
+        console.log("YES FIELDS ARE PROVIDED");
+        
+
+        if(name?.length > 0)
         {
-            if(obj[key] !== "")
-            {
-                options[key] = obj[key]
-            }
+            options["generalPatientInfo.patientName"] = name
         }
-        )
+
+        if(email?.length > 0)
+        {
+            options["generalPatientInfo.email"] = email
+        }
+
+        if(cellNo?.length > 0)
+        {
+            options["generalPatientInfo.cellNo"] = cellNo
+        }
+
     }
 
-    fieldsSetter(availableOptions)
+    if(doctor?.length > 0 && user.role !== "doctor")
+    {
+        options.doctor = doctor
+    }
+
+    if(forSession?.length > 0)
+    {
+        options.forSession = forSession
+    }
+
+    if(paymentBased == 1)
+    {
+        options.payment = 0
+    }
+
+    if(diagnoses?.length > 0)
+    {
+        options.diagnoses = diagnoses
+    }
+
+    if(cups > 0)
+    {
+        options.cups = cups
+    }
+    
+    if(status?.length > 0)
+    {
+        options.status = status
+    }
+
+    if(starting?.length > 0)
+    {
+        startingDate = new Date(starting)
+    }
+
+    if(ending?.length > 0)
+    {
+        endingDate = new Date(ending)
+    }
+
+    
+    if(user.role == "receptionist")
+    {
+        const receptionist = await User.findById(user._id)
+
+        if(!receptionist._id)
+        {
+            throw new APIError(403, "Failed to find receptionist data from database")
+        }
+
+        if(receptionist.receptionistField.controls.patientAllowanceAccess == "week")
+        {
+            startingDate.setDate(startingDate.getDate() - 7)
+        }
+        else if(receptionist.receptionistField.controls.patientAllowanceAccess == "month")
+        {
+            startingDate.setMonth(startingDate.getMonth() - 1)
+        }
+        else if(receptionist.receptionistField.controls.patientAllowanceAccess == "year")
+        {
+            startingDate.setFullYear(startingDate.getFullYear() - 1)
+        }
+    }
+
+    options["times.date"] =
+    {
+        $gte: startingDate,
+        $lt: endingDate,
+    }
+
+    
 
 
 
+    const targettedAppointments = await Appointment
+    .find(options)
+    .populate("userProfileId")
+    .populate("doctor", "userName avatar")
+    .populate({
+        path: "userProfileId",
+        populate: {
+            path: "patientAccount",
+            select: "userName avatar"
+        }
+    })
+
+    return res
+    .status(200)
+    .json(
+        new APIResponse(200, "Successfully fetched targetted appointments", {appointments: targettedAppointments, providedOptions: options})
+    )
 
 
 
 })
+
+export {appointmentSearcher}

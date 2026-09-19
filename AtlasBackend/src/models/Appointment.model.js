@@ -9,14 +9,15 @@ const appointmentSchema = new Schema(
         ref: "User",
         required: true
     },
-    doneBy:
+    statusUpdatedBy:
     {
-        type: String,
-        default: "receptionist"
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        default: null
     },
     userProfileId:
     {
-        type: mongoose.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "Profile",
         required: true
     },
@@ -41,25 +42,26 @@ const appointmentSchema = new Schema(
     },
     doctor:
     {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: "User",
         required: true
     },
     times:
     {
-        type:
-        {
-            time: String,
-            date: Date,
-            cancellingTime: Number,
-            remainingTime: Number,
-            timeOfUpdation: Number
+        time: String,
+        date: Date,
+        cancellingTime: Number,
+        remainingTime: Number,
+        timeOfUpdation: Number
 
-        }
     },
     
     forSession:
     {
         type: String,
+        enum: ["cupping", "physio", "dry-needling", "checkup"],
+        trim: true,
+        default: "checkup",
         required: true
     },
     payment:
@@ -88,3 +90,5 @@ const appointmentSchema = new Schema(
 
 
 export const Appointment = mongoose.model("Appointment", appointmentSchema)
+
+

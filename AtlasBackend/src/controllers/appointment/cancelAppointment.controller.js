@@ -47,7 +47,7 @@ const cacellingAppointment = asyncHandler( async (req, res) =>
     const appointment = await Appointment.findById(appointmentId).populate("userProfileId")
 
 
-    if(!appointment._id)
+    if(!appointment?._id)
     {
         throw new APIError(404, "Appointment is not exist")
     }
@@ -78,3 +78,6 @@ const cacellingAppointment = asyncHandler( async (req, res) =>
 
 
 })
+
+
+export {cacellingAppointment}

@@ -57,6 +57,7 @@ const updatingStatus = asyncHandler( async (req, res) =>
     if((requester.role == "receptionist" && allowedDoctor.includes(appointment.doctor)) || requester.role == "admin")
     {
         appointment.status = status
+        appointment.statusUpdatedBy = requester._id
 
         await appointment.save({validateBeforSave: false})
 

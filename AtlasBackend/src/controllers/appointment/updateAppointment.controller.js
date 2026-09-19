@@ -30,7 +30,7 @@ const updatingAppointment = asyncHandler( async (req, res) =>
     }
     
 
-    if(!requester._id)
+    if(!requester?._id)
     {
         throw new APIError(401, "User is not authorized to perform this action")
     }
@@ -45,7 +45,7 @@ const updatingAppointment = asyncHandler( async (req, res) =>
             date,
             forSession,
             diagnoses
-        ].every(field => field?.trim() == "")
+        ].every(field => !field || field?.trim() == "")
     )
     {
         throw new APIError(400, "Please provide at-least one field to update")   
@@ -67,7 +67,7 @@ const updatingAppointment = asyncHandler( async (req, res) =>
 
     
 
-    if(!appointment._id)
+    if(!appointment?._id)
     {
         throw new APIError(404, "Appointment is not exist")
     }
