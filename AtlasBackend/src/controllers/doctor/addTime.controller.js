@@ -40,7 +40,7 @@ const addTime = asyncHandler( async (req, res) =>
     }
     
     
-    const DBDoctor = await User.findById(user?._id)
+    const DBDoctor = await User.findById(user?._id).select("-password -refreshToken -receptionistField -doctorField.onDuty -avatarPublicID")
     
     if(!DBDoctor?._id)
     {

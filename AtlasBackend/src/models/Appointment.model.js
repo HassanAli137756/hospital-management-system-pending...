@@ -85,6 +85,9 @@ const appointmentSchema = new Schema(
     
 
 
+},
+{
+    timestamps: true
 }
 )
 

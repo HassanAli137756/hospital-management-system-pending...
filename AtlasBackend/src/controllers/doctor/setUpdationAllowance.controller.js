@@ -23,10 +23,13 @@ const changeReceptionistControl = asyncHandler( async (req, res) =>
     }
 
     const allowedDoctors = DBReceptionist.receptionistField.controls.allowedToUpdateStatus || []
+
+    console.log("allowedToUpdateStatus: ", allowedDoctors);
+    
     
     if(allowedDoctors.includes(user._id))
     {
-        DBReceptionist.receptionistField.controls.allowedToUpdateStatus = allowedDoctors.map(doctorId => doctorId !== user._id)
+        DBReceptionist.receptionistField.controls.allowedToUpdateStatus = allowedDoctors.filter(doctorId => doctorId !== user._id)
     }
     else
     {
@@ -34,12 +37,12 @@ const changeReceptionistControl = asyncHandler( async (req, res) =>
     }
 
     
-    await DBDoctor.save({validateBeforeSave: false})
+    await DBReceptionist.save({validateBeforeSave: false})
 
     return res
     .status(200)
     .json(
-        new APIResponse(200, "Successfully updated receptionist controlls")
+        new APIResponse(200, "Successfully updated receptionist controlls", DBReceptionist)
     )
 
 

@@ -7,7 +7,9 @@ import {User} from '../../models/User.model.js'
 const updateDutyStatus = asyncHandler( async (req, res) =>
 {
     const user = req.user
-    const DBDoctor = await User.findById(user._id).select("-password -refreshToken")
+    const DBDoctor = await User.findById(user._id).select("-password -refreshToken -receptionistField -doctorField.times -avatarPublicID")
+
+    
     if(!DBDoctor?._id)
     {
         throw new APIError(404, "Failed to find doctor from database")

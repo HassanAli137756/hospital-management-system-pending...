@@ -53,7 +53,7 @@ const UserSchema = new Schema(
         role:
         {
             type: String,
-            enum: ["docotr", "patient", "admin", "receptionist"],
+            enum: ["docotr", "patient", "admin", "receptionist", "sub-admin"],
             default: ["patient"]
         },
         gender:
@@ -64,21 +64,15 @@ const UserSchema = new Schema(
         },
         receptionistField:
         {
-            type:
+            controls:
             {
-                controls:
+                allPaymentAccessPeriod:
                 {
-                    type:
-                    {
-
-                        allPaymentAccess:
-                        {
-                            type: Boolean,
-                            default: false
-                        },
-                        allowedToUpdateStatus: [String],
-                    }
-                }
+                    type: String,
+                    enum: ["week", "month", "year", "all"],
+                    default: "month"
+                },
+                allowedToUpdateStatus: [],
             }
         },
         doctorField:
@@ -183,21 +177,22 @@ const UserSchema = new Schema(
                             type: Boolean,
                             default: true
                         }
-                    }
-                        
-                ],
-                onDuty:
-                {
-                    type: Boolean
-                },
-                controlsOfReceptionist:
-                {
-                    type: Object
-                }
+                        }
+
+                    ]
+            }
+            ,
+            onDuty:
+            {
+                type: Boolean,
+                default: true
             }
         }
 
 
+    },
+    {
+        timestamps: true
     }
 )
 

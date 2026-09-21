@@ -25,7 +25,7 @@ const authMiddleware = async(req, res, next) =>
     } 
     catch (error) {
         console.log("Failed in authmiddleware to find user", error);
-        throw new APIError(500, error?.message || "Failed in authenticatting a user")
+        throw new APIError(error?.statusCode || 500, error?.message || "Failed in authenticatting a user")
     }
 }
 

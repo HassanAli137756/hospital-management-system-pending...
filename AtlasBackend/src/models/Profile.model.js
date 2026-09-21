@@ -19,6 +19,9 @@ const profileSchema = new Schema(
         ref: "User",
         default: null
     }
+},
+{
+    timestamps: true
 }
 )
 

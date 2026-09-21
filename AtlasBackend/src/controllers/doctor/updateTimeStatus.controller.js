@@ -7,34 +7,50 @@ import {asyncHandler} from '../../utils/asyncHander.js'
 const updateTimeStatus = asyncHandler( async (req, res) =>
 {
     const user = req.user
-    const updatingTime = req.body
-    const section = req.body
+    const 
+    {
+        updatingTime,
+        day
+    } = req.body
+    
 
-    if(!updatingTime?.trim().length > 0 || !section?.trim().length > 0)
+    if(!updatingTime?.trim().length > 0 || !day?.trim().length > 0)
     {
         throw new APIError(403, "Please provide all required fields")
     }
     
-    const DBDoctor = await User.findById(user._id)
+    const DBDoctor = await User.findById(user._id).select("-password -refreshToken -receptionistField -doctorField.onDuty -avatarPublicID")
     
     if(!DBDoctor._id)
     {
         throw new APIError(403, "Failed to find doctor from database")
     }
 
-    if(!(section == "today" || section == "tomorrow" || section == "afterTomorrow") )
-    {
-        throw new APIError(400, "Please provide a valid section")
+    if (
+        [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+        ].every(field => field !== day)
+    ) {
+        throw new APIError(400, "Please provide correct day")
     }
 
-    const targettedTimes = DBDoctor.doctorField.Times[section] || []
+    const targettedTimes = DBDoctor.doctorField.times[day] || []
 
     if(targettedTimes.some(field => !field.availability))
     {
         throw new APIError(400, "Status can't be changed as booked by a patient")
     }
 
-    DBDoctor.doctorField.Times.today.map(time => (time.time == updatingTime ? {...time, status: !time.status} : time))
+    if (targettedTimes.every(field => field.time !== updatingTime)) {
+        throw new APIError(400, "Given time is not included in provided day")
+    }
+
+    DBDoctor.doctorField.times[day] = DBDoctor.doctorField.times[day].map(time => (time.time == updatingTime ? ({...time, status: !time.status}) : time))
 
 
     await DBDoctor.save({validateBeforeSave: false})

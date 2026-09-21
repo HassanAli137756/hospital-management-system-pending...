@@ -42,7 +42,7 @@ const appointmentSearcher = asyncHandler( async (req, res) =>
     } = req.body
 
     const presentDate = new Date()
-
+    const presentDay = presentDate.toLocaleDateString("en-US", {weekday: "long"}).toLowerCase()
     let startingDate = new Date(presentDate)
     let endingDate = new Date(startingDate)
     endingDate.setDate(startingDate.getDate() + 1)
@@ -146,17 +146,53 @@ const appointmentSearcher = asyncHandler( async (req, res) =>
             throw new APIError(403, "Failed to find receptionist data from database")
         }
 
-        if(receptionist.receptionistField.controls.patientAllowanceAccess == "week")
+        if(receptionist.receptionistField.controls.allPaymentAccessPeriod == "week")
         {
-            startingDate.setDate(startingDate.getDate() - 7)
+            if(presentDay == "tuesday")
+            {
+                starting(presentDate.getDate() - 1)
+            }
+            else if(presentDay == "wednesday")
+            {
+                starting(presentDate.getDate() - 2)
+            }
+            else if(presentDay == "thursday")
+            {
+                starting(presentDate.getDate() - 3)
+            }
+            else if(presentDay == "firday")
+            {
+                starting(presentDate.getDate() - 4)
+            }
+            else if(presentDay == "saturday")
+            {
+                starting(presentDate.getDate() - 5)
+            }
+            else if(presentDay == "sunday")
+            {
+                starting(presentDate.getDate() - 6)
+            }
+            
         }
-        else if(receptionist.receptionistField.controls.patientAllowanceAccess == "month")
+        else if(receptionist.receptionistField.controls.allPaymentAccessPeriod == "month")
         {
-            startingDate.setMonth(startingDate.getMonth() - 1)
+            startingDate.setDate(1)
+            endingDate.getDate(30)
         }
-        else if(receptionist.receptionistField.controls.patientAllowanceAccess == "year")
+        else if(receptionist.receptionistField.controls.allPaymentAccessPeriod == "year")
         {
-            startingDate.setFullYear(startingDate.getFullYear() - 1)
+            startingDate.setMonth(0)
+            endingDate.setMonth(11)
+        }
+        else if (receptionist.receptionistField.controls.allPaymentAccessPeriod == "all") {
+
+            if (starting?.length > 0) {
+                startingDate = new Date(starting)
+            }
+
+            if (ending?.length > 0) {
+                endingDate = new Date(ending)
+            }
         }
     }
 

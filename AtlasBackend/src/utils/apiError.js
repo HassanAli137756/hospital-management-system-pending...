@@ -5,7 +5,7 @@ export class APIError extends Error
     constructor(statusCode, message, errors=[], stack=null)
     {
         super(message)
-        this.statusCode = statusCode | 500
+        this.statusCode = statusCode || 500
         this.errors = errors
         this.data = null
         this.success = false

@@ -21,18 +21,30 @@ const doctorRouter = express.Router()
 
 
 
+// OKAY
 doctorRouter.route("/get-doctor-times/:doctorId").get(authMiddleware, getDoctorTimes)
 
 
-doctorRouter.route("/change-receptionist-control").post(authMiddleware, verifyRole("doctor"), changeReceptionistControl)
+// OKAY
+doctorRouter.route("/change-receptionist-control").patch(authMiddleware, verifyRole("doctor"), changeReceptionistControl)
 
-doctorRouter.route("/update-doctor-duty-status").post(authMiddleware, verifyRole("doctor"), updateDutyStatus)
 
+// OKAY
+doctorRouter.route("/update-doctor-duty-status").patch(authMiddleware, verifyRole("doctor"), updateDutyStatus)
+
+
+// OKAY
 doctorRouter.route("/add-time").post(authMiddleware, verifyRole("doctor"), addTime)
 
-doctorRouter.route("/delete-time").post(authMiddleware, verifyRole("doctor"), deleteTime)
 
-doctorRouter.route("/update-time-status").post(authMiddleware, verifyRole("doctor"), updateTimeStatus)
+
+// OKAY
+doctorRouter.route("/delete-time").delete(authMiddleware, verifyRole("doctor"), deleteTime)
+
+
+
+// OKAY
+doctorRouter.route("/update-time-status").patch(authMiddleware, verifyRole("doctor"), updateTimeStatus)
 
 
 

@@ -46,6 +46,7 @@ import { UpdatePassword } from './authServices/UpdatePassword'
 import { UpdateAccoutDetails } from './authServices/UpdateAccountDetails'
 import { UpdateAccoutImages } from './authServices/UpdateAccountImages'
 import { UnAuthorizedUserLayout } from './Routing/UnAuthorizedUserLayout'
+import App from './App'
 
 
 
@@ -175,11 +176,12 @@ createRoot(
 
   <StrictMode>
 
-    <Provider store={store}>
+    {/* <Provider store={store}>
 
       <RouterProvider router={router} />
 
-    </Provider>
+    </Provider> */}
+    <App />
 
   </StrictMode>
 )

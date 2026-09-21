@@ -15,36 +15,36 @@ export const userRouter = express.Router()
 
 
 
-/* TESTED */
+// OKAY 
 userRouter.route('/user-register').post(upload.single("avatar"), register)
 
 
 
 
-/* TESTED */
+// OKAY 
 userRouter.route('/user-login').post(login)
 
 
 
-
-
-/* TESTED */
+// OKAY 
 userRouter.route('/update-account-details').patch(authMiddleware, upload.single("avatar"), updateAccount)
 
 
 
-/* TESTED */
+// OKAY 
 userRouter.route('/get-current-user').get(authMiddleware, getCurrentUser)
 
 
 
-/* TESTED */
+// OKAY 
 userRouter.route('/refresh-tokens').post(refreshingAccessToken)
 
 
 
-/* TESTED */
+// OKAY 
 userRouter.route("/logout").post(authMiddleware, logout)
+
+
 
 
 userRouter.route()
