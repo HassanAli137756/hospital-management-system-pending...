@@ -1,17 +1,17 @@
 import React from "react";
-import { Login } from "./Login";
-import { LoginForm } from "../forms/LoginForm";
+import { UpdatePassword } from "./UpdatePassword";
 import { UpdatePasswordForm } from "../forms/UpdatePasswordForm";
+import { UpdateProfileForm } from "../forms/UpdateProfileForm";
 
 
 
-const UpdatePassword = () => {
+const UpdateProfile = () => {
   return (
     <div className="min-h-screen bg-[#f4f8f6] flex items-center justify-center p-4">
 
       <div className="w-full max-w-5xl">
 
-        {/* Main Authentication Container */}
+        {/* Main Profile Container */}
         <div
           className="bg-white rounded-3xl overflow-hidden
                      border border-emerald-100/70
@@ -21,7 +21,6 @@ const UpdatePassword = () => {
 
           {/* =====================================================
               LEFT BRANDING PANEL
-              Same branding as Login page
               ===================================================== */}
           <div
             className="hidden lg:flex relative overflow-hidden
@@ -29,7 +28,7 @@ const UpdatePassword = () => {
                        flex-col justify-between"
           >
 
-            {/* Decorative background circles */}
+            {/* Decorative circles */}
             <div
               className="absolute -top-24 -right-24
                          w-72 h-72 rounded-full
@@ -42,7 +41,6 @@ const UpdatePassword = () => {
                          border-45 border-emerald-800/20"
             />
 
-            {/* Brand + Message */}
             <div className="relative z-10">
 
               {/* Brand */}
@@ -82,7 +80,7 @@ const UpdatePassword = () => {
               </div>
 
 
-              {/* Password Security Message */}
+              {/* Profile Message */}
               <div className="mt-20">
 
                 <div
@@ -101,7 +99,9 @@ const UpdatePassword = () => {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth="2"
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                      d="M16 7a4 4 0 11-8 0 4 4 0
+                         018 0zM12 14a7 7 0
+                         00-7 7h14a7 7 0 00-7-7z"
                     />
                   </svg>
                 </div>
@@ -110,7 +110,7 @@ const UpdatePassword = () => {
                   className="text-emerald-400 text-xs font-semibold
                              uppercase tracking-[0.18em] mb-4"
                 >
-                  Account Security
+                  Profile Settings
                 </p>
 
                 <h2
@@ -118,15 +118,15 @@ const UpdatePassword = () => {
                              font-semibold text-white
                              leading-tight max-w-sm"
                 >
-                  Keep your account
+                  Keep your
                   <span className="text-emerald-400">
-                    {" "}secure.
+                    {" "}information up to date.
                   </span>
                 </h2>
 
                 <p className="mt-5 text-sm leading-6 text-emerald-100/70 max-w-sm">
-                  Create a strong password to help protect your
-                  clinic account and sensitive information.
+                  Update your account details so your clinic
+                  team can always reach you with the right information.
                 </p>
 
               </div>
@@ -134,7 +134,7 @@ const UpdatePassword = () => {
             </div>
 
 
-            {/* Bottom Security Info */}
+            {/* Bottom Info */}
             <div className="relative z-10">
 
               <div className="flex items-center gap-3">
@@ -154,23 +154,18 @@ const UpdatePassword = () => {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       strokeWidth="2"
-                      d="M9 12l2 2 4-4m5.618-4.016A11.955
-                         11.955 0 0112 2.944a11.955 11.955
-                         0 01-8.618 3.04A12.02 12.02 0
-                         002 12c0 5.591 3.824 10.29
-                         9 11.622 5.176-1.332 9-6.03
-                         9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                      d="M5 13l4 4L19 7"
                     />
                   </svg>
                 </div>
 
                 <div>
                   <p className="text-xs font-medium text-white">
-                    Protected account
+                    Profile information
                   </p>
 
                   <p className="text-[11px] text-emerald-200/60">
-                    Use a password only you know
+                    Keep your contact details accurate
                   </p>
                 </div>
 
@@ -182,7 +177,7 @@ const UpdatePassword = () => {
 
 
           {/* =====================================================
-              RIGHT UPDATE PASSWORD SECTION
+              RIGHT PROFILE UPDATE SECTION
               ===================================================== */}
           <div className="p-6 sm:p-10 lg:p-12">
 
@@ -229,23 +224,26 @@ const UpdatePassword = () => {
                 className="text-xs font-semibold uppercase
                            tracking-[0.16em] text-emerald-600 mb-3"
               >
-                Account Security
+                Profile Settings
               </p>
 
               <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">
-                Update your password
+                Update your information
               </h1>
 
               <p className="mt-2 text-sm text-gray-500 max-w-md">
-                Choose a new password to keep your clinic account
-                secure.
+                Keep your account details current so your clinic
+                profile stays accurate.
               </p>
 
             </div>
 
 
-            <UpdatePasswordForm />
             
+            <UpdateProfileForm />
+
+
+            {/* Back / Cancel */}
             <div className="mt-8 pt-6 border-t border-gray-100">
 
               <button
@@ -269,13 +267,13 @@ const UpdatePassword = () => {
                   />
                 </svg>
 
-                Back to sign in
+                Back to profile
               </button>
 
             </div>
 
 
-            {/* Security Notice */}
+            {/* Information Notice */}
             <div
               className="mt-6 flex items-start gap-3
                          rounded-xl bg-emerald-50/70
@@ -293,15 +291,15 @@ const UpdatePassword = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2
-                     0 002-2H6a2 2 0 00-2 2v6a2 2 0
-                     002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  d="M13 16h-1v-4h-1m1-4h.01
+                     M12 20a8 8 0 100-16 8 8 0
+                     000 16z"
                 />
               </svg>
 
               <p className="text-[11px] leading-5 text-emerald-800/70">
-                For your security, never share your password
-                with other clinic staff.
+                Make sure your email address and phone number
+                are correct before saving your changes.
               </p>
 
             </div>
@@ -321,4 +319,4 @@ const UpdatePassword = () => {
   );
 };
 
-export {UpdatePassword};
+export {UpdateProfile};

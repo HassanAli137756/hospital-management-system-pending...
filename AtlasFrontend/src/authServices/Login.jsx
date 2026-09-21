@@ -1,161 +1,282 @@
 import React from 'react'
-import LoginForm from '../forms/LoginForm';
+import { RegisterForm } from '../forms/RegisterForm';
+import { LoginForm } from '../forms/LoginForm';
 
-function Login() {
+const Login = () => {
   return (
-  <div className="min-h-screen bg-linear-to-br from-green-50 via-white to-green-100 flex items-center justify-center px-4 py-10">
-    <div
-      className="
-        w-full
-        max-w-6xl
-        overflow-hidden
-        rounded-3xl
-        bg-white
-        shadow-2xl
-        grid
-        lg:grid-cols-2
-      "
-    >
+    <div className="min-h-screen bg-[#f4f8f6] flex items-center justify-center p-4">
 
-      <div
-        className="
-          hidden
-          lg:flex
-          relative
-          overflow-hidden
-          flex-col
-          justify-between
-          bg-linear-to-br
-          from-green-700
-          via-green-600
-          to-emerald-700
-          p-12
-          text-white
-        "
-      >
-        {/* Decorative Shapes */}
+      <div className="w-full max-w-5xl">
 
-        <div className="absolute -top-16 -right-16 h-56 w-56 rounded-full bg-white/10"></div>
+        {/* Main Authentication Container */}
+        <div
+          className="bg-white rounded-3xl overflow-hidden
+                     border border-emerald-100/70
+                     shadow-[0_20px_60px_-25px_rgba(6,78,59,0.20)]
+                     grid lg:grid-cols-[1fr_1.05fr]"
+        >
 
-        <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-white/10"></div>
+          {/* =====================================================
+              LEFT BRANDING PANEL
+              ===================================================== */}
+          <div
+            className="hidden lg:flex relative overflow-hidden
+                       bg-emerald-950 p-10 xl:p-12
+                       flex-col justify-between"
+          >
 
-        {/* Logo */}
+            {/* Decorative medical pattern */}
+            <div
+              className="absolute -top-24 -right-24
+                         w-72 h-72 rounded-full
+                         border-40 border-emerald-800/30"
+            />
 
-        <div>
-          <h1 className="text-4xl font-bold tracking-wide">
-            VideoTube
-          </h1>
+            <div
+              className="absolute -bottom-32 -left-32
+                         w-80 h-80 rounded-full
+                         border-45 border-emerald-800/20"
+            />
 
-          <p className="mt-4 text-lg text-green-100">
-            Secure. Fast. Built for creators.
-          </p>
-        </div>
+            {/* Brand */}
+            <div className="relative z-10">
 
-        {/* Hero Text */}
+              <div className="flex items-center gap-3">
 
-        <div>
-          <h2 className="text-6xl font-extrabold leading-tight">
-            Welcome
-            <br />
-            Back 👋
-          </h2>
+                {/* Brand Mark */}
+                <div
+                  className="w-11 h-11 rounded-xl
+                             bg-emerald-500
+                             flex items-center justify-center
+                             shadow-lg shadow-emerald-950/30"
+                >
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                </div>
 
-          <p className="mt-6 max-w-md text-lg leading-8 text-green-100">
-            Continue your creator journey. Upload videos,
-            manage your content and stay connected with
-            your audience.
-          </p>
-        </div>
+                <div>
+                  <p className="text-white font-semibold text-lg leading-none">
+                    CareFlow
+                  </p>
 
-        {/* Bottom Stats */}
+                  <p className="text-emerald-300 text-[11px] mt-1 tracking-wide">
+                    CLINIC MANAGEMENT SYSTEM
+                  </p>
+                </div>
 
-        <div className="grid grid-cols-2 gap-5">
-          <div className="rounded-2xl bg-white/10 p-5 backdrop-blur-md">
-            <h3 className="text-4xl font-bold">
-              100%
-            </h3>
+              </div>
 
-            <p className="mt-2 text-green-100">
-              Secure Authentication
-            </p>
+
+              {/* Main Brand Message */}
+              <div className="mt-20">
+
+                <p
+                  className="text-emerald-400 text-xs font-semibold
+                             uppercase tracking-[0.18em] mb-4"
+                >
+                  Your Clinic. One System.
+                </p>
+
+                <h2
+                  className="text-3xl xl:text-4xl
+                             font-semibold text-white
+                             leading-tight max-w-sm"
+                >
+                  Everything your clinic needs,
+                  <span className="text-emerald-400">
+                    {" "}in one place.
+                  </span>
+                </h2>
+
+                <p className="mt-5 text-sm leading-6 text-emerald-100/70 max-w-sm">
+                  Manage appointments, patients, sessions and
+                  clinic operations through one simple workspace.
+                </p>
+
+              </div>
+
+            </div>
+
+
+            {/* Bottom Info */}
+            <div className="relative z-10">
+
+              <div className="flex items-center gap-3">
+
+                <div
+                  className="w-9 h-9 rounded-lg
+                             bg-white/10
+                             flex items-center justify-center"
+                >
+                  <svg
+                    className="w-4 h-4 text-emerald-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    />
+                  </svg>
+                </div>
+
+                <div>
+                  <p className="text-xs font-medium text-white">
+                    Secure access
+                  </p>
+
+                  <p className="text-[11px] text-emerald-200/60">
+                    Your clinic data stays protected
+                  </p>
+                </div>
+
+              </div>
+
+            </div>
+
           </div>
 
-          <div className="rounded-2xl bg-white/10 p-5 backdrop-blur-md">
-            <h3 className="text-4xl font-bold">
-              24/7
-            </h3>
 
-            <p className="mt-2 text-green-100">
-              Instant Access
-            </p>
-          </div>
-        </div>
-      </div>
+          {/* =====================================================
+              RIGHT LOGIN SECTION
+              ===================================================== */}
+          <div className="p-6 sm:p-10 lg:p-12">
+
+            {/* Mobile Branding */}
+            <div className="lg:hidden flex items-center gap-3 mb-10">
+
+              <div
+                className="w-10 h-10 rounded-xl
+                           bg-emerald-600
+                           flex items-center justify-center"
+              >
+                <svg
+                  className="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+              </div>
+
+              <div>
+                <p className="font-semibold text-gray-900">
+                  CareFlow
+                </p>
+
+                <p className="text-[10px] tracking-wide text-emerald-600">
+                  CLINIC MANAGEMENT SYSTEM
+                </p>
+              </div>
+
+            </div>
 
 
-      <div className="flex items-center justify-center px-6 py-12 sm:px-10 lg:px-14">
-        <div className="w-full max-w-md">
+            {/* Login Heading */}
+            <div className="mb-8">
 
-          {/* Heading */}
+              <p
+                className="text-xs font-semibold uppercase
+                           tracking-[0.16em] text-emerald-600 mb-3"
+              >
+                Secure Sign In
+              </p>
 
-          <div className="text-center">
-            <h2 className="text-5xl font-bold text-gray-900">
-              Sign In
-            </h2>
+              <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">
+                Welcome back
+              </h1>
 
-            <p className="mt-4 text-gray-500">
-              Welcome back! Login to continue.
-            </p>
-          </div>
+              <p className="mt-2 text-sm text-gray-500">
+                Sign in to continue managing your clinic.
+              </p>
 
-         
+            </div>
+
+
             <LoginForm />
 
 
+            {/* Registration */}
+            <div className="mt-8 pt-6 border-t border-gray-100">
 
-          <div className="mt-4 text-right">
-            <button className="text-sm font-medium text-green-700 hover:text-green-800">
-              Forgot Password?
-            </button>
-          </div>
+              <p className="text-center text-sm text-gray-500">
+                Don't have a clinic account?{" "}
 
+                <button
+                  type="button"
+                  className="font-semibold text-emerald-600
+                             hover:text-emerald-700 transition-colors"
+                >
+                  Create an account
+                </button>
+              </p>
 
-          <div className="mt-6">
-            
-          </div>
-
-          {/* Divider */}
-
-          <div className="my-8 flex items-center">
-            <div className="h-px flex-1 bg-gray-200"></div>
-
-            <span className="px-4 text-sm text-gray-400">
-              OR
-            </span>
-
-            <div className="h-px flex-1 bg-gray-200"></div>
-          </div>
+            </div>
 
 
+            {/* Security Notice */}
+            <div
+              className="mt-6 flex items-start gap-3
+                         rounded-xl bg-emerald-50/70
+                         border border-emerald-100
+                         px-4 py-3"
+            >
 
+              <svg
+                className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
 
+              <p className="text-[11px] leading-5 text-emerald-800/70">
+                Your account information is handled securely
+                and is only accessible to authorized clinic staff.
+              </p>
 
+            </div>
 
-          <div className="mt-8 text-center">
-            <p className="text-gray-500">
-              Don't have an account?
-            </p>
-
-            <button className="mt-2 font-semibold text-green-700 transition-colors hover:text-green-800">
-              Create Account
-            </button>
           </div>
 
         </div>
-      </div>
-    </div>
-  </div>
-);
-}
 
-export { Login}
+
+        {/* Footer */}
+        <p className="text-center text-xs text-gray-400 mt-5">
+          © {new Date().getFullYear()} Atlas Physiotherapy· Clinic Management System
+        </p>
+
+      </div>
+
+    </div>
+  );
+};
+
+export {Login};
