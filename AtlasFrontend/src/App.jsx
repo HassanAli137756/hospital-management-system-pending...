@@ -614,6 +614,16 @@ function App() {
 
       </div>
 
+      <div>
+        <input 
+        type="date" 
+        name="date" 
+        id="date"
+        max="2026-10-28"
+        min="2026-09-10"
+        />
+      </div>
+
     </div>
   );
 }

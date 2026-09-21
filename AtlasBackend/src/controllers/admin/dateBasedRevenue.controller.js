@@ -1,6 +1,6 @@
 
 import mongoose from "mongoose";
-import { ApiResponse } from "../../../../../../BackendSeries/VedioTube/Backend/src/utils/CustomResponse.js";
+import { ApiResponse } from "../../../../../../BackendSeries/videoTube/Backend/src/utils/CustomResponse.js";
 import { User } from "../../models/User.model.js";
 import {APIError} from '../../utils/apiError.js'
 import {APIResponse} from '../../utils/apiResponse.js'

@@ -33,7 +33,8 @@ const appointmentSearcher = asyncHandler( async (req, res) =>
         cellNo,
         doctor,
         forSession,
-        paymentBased=0,
+        payment=0,
+        isPaymentBased=0,
         diagnoses,
         cups=0,
         status,
@@ -106,9 +107,9 @@ const appointmentSearcher = asyncHandler( async (req, res) =>
         options.forSession = forSession
     }
 
-    if(paymentBased == 1)
+    if(isPaymentBased == 1)
     {
-        options.payment = 0
+        options.payment = payment
     }
 
     if(diagnoses?.length > 0)
