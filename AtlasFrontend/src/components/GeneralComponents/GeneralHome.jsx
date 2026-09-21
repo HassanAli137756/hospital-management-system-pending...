@@ -18,7 +18,7 @@ const ReceptionistHome = (
     totalAppointments="14",
     doneAppointments="5",
     paidPayment="5000",
-    pendingPayment="5000",
+    pendingPayment="2000",
     todayAppointments = [
     {
     id: 1,

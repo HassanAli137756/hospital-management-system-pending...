@@ -6,6 +6,10 @@ import PatientAppointments from "../components/Patient/PatientAppointment";
 import PatientHistory from "../components/Patient/PatientHistory";
 import PatientPayments from "../components/Patient/PatientPayments";
 import ReceptionistHome from "../components/GeneralComponents/GeneralHome";
+import ReceptionistAppointments from "../components/GeneralComponents/GeneralAppointment";
+import { ReceptionistPayments } from "../components/Receptionist/ReceptionistPayments";
+import { PatientSearch } from "../components/GeneralComponents/GeneralSearcher";
+import { GeneralPayments } from "../components/GeneralComponents/GeneralPayments";
 
 
 const sidebarLinks = [
@@ -531,7 +535,9 @@ const GeneralDashboard = () => {
         {/* ELEMENTS THROUGH OUTLET */}
         <main className="flex-1 min-w-0">
             <div className="p-4 sm:p-7 lg:p-9 xl:p-10">
-                <ReceptionistHome />
+                <GeneralPayments
+                isReceptionist={true}
+                />
             </div>
         </main>
 
