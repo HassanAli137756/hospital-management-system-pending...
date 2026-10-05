@@ -12,7 +12,7 @@ CheckCircle2,
 Stethoscope,
 } from "lucide-react";
 
-const ReceptionistHome = (
+const GeneralHome = (
 {
     totalBookingTimes="15",
     totalAppointments="14",
@@ -463,4 +463,4 @@ return ( <div className="min-h-full bg-gray-50/70 p-4 sm:p-6 lg:p-8"> <div class
 );
 };
 
-export default ReceptionistHome;
+export {GeneralHome};

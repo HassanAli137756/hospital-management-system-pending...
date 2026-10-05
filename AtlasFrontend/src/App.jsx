@@ -5,10 +5,12 @@ import { UpdatePassword } from "./authServices/UpdatePassword";
 import { UpdateProfile } from "./authServices/UpdateProfile";
 import { Logout } from "./authServices/Logout";
 import { GeneralDashboard } from "./utils/GeneralDashboard";
+import Loading from "./utils/Loading";
 function App() {
  return(
-  <div>
-      <GeneralDashboard />
+  <div className="flex justify-center">
+      <Logout />
+      <Login />
     </div>
  )
 }

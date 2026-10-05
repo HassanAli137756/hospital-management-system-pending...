@@ -55,7 +55,6 @@ status: "Upcoming",
 
 return ( <div className="min-h-full bg-[#f4f8f6] px-4 py-6 sm:px-6 lg:px-8"> <div className="mx-auto max-w-7xl">
 
-```
     {/* Page Header */}
     <div className="mb-8">
       <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">

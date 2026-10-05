@@ -42,7 +42,7 @@ userRouter.route('/refresh-tokens').post(refreshingAccessToken)
 
 
 // OKAY 
-userRouter.route("/logout").post(authMiddleware, logout)
+userRouter.route("/user-logout").post(authMiddleware, logout)
 
 
 

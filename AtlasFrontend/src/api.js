@@ -13,12 +13,16 @@ api.interceptors.response.use(
 
     (response) =>
     {
+        console.log("Response in api.js: ", response);
+        
         return Promise.resolve(response)
     },
 
 
     async (err) =>
     {
+        console.log("Error in intercepters: ", err);
+        
         const originalRequest = err.config
 
         if(err?.response?.status === 401 && err?.response?.data?.message === "jwt have expired")

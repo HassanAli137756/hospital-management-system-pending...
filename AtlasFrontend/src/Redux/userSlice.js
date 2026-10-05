@@ -18,6 +18,8 @@ const userSlice = createSlice(
     {
         setUserInfo: (state, action) =>
         {
+            console.log("User data has updated: ", action.payload);
+            
             state.userInfo = action.payload
         },
 

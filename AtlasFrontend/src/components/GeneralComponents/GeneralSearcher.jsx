@@ -358,7 +358,7 @@ return ( <div className="min-h-full bg-[#f5f8f7] p-4 sm:p-6 lg:p-8"> <div classN
 
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="break-words font-semibold text-gray-900">
+                    <h3 className="wrap-words font-semibold text-gray-900">
                       {patient.name}
                     </h3>
 
@@ -405,7 +405,7 @@ return ( <div className="min-h-full bg-[#f5f8f7] p-4 sm:p-6 lg:p-8"> <div classN
                   Doctor
                 </p>
 
-                <p className="mt-1 break-words text-sm font-medium text-gray-700">
+                <p className="mt-1 wrap-words text-sm font-medium text-gray-700">
                   {patient.doctor}
                 </p>
               </div>
@@ -415,7 +415,7 @@ return ( <div className="min-h-full bg-[#f5f8f7] p-4 sm:p-6 lg:p-8"> <div classN
                   Session
                 </p>
 
-                <p className="mt-1 break-words text-sm font-medium text-gray-700">
+                <p className="mt-1 wrap-words text-sm font-medium text-gray-700">
                   {patient.session}
                 </p>
               </div>

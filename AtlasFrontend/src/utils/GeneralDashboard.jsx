@@ -1,16 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "./Header";
-import { GeneralHome } from "./GeneralHome";
-import PatientHome from "../components/Patient/PatientHome";
-import PatientAppointments from "../components/Patient/PatientAppointment";
-import PatientHistory from "../components/Patient/PatientHistory";
-import PatientPayments from "../components/Patient/PatientPayments";
-import ReceptionistHome from "../components/GeneralComponents/GeneralHome";
-import ReceptionistAppointments from "../components/GeneralComponents/GeneralAppointment";
-import { ReceptionistPayments } from "../components/Receptionist/ReceptionistPayments";
-import { PatientSearch } from "../components/GeneralComponents/GeneralSearcher";
 import { GeneralPayments } from "../components/GeneralComponents/GeneralPayments";
-
+import PatientHistory from "../components/Patient/PatientHistory";
+import PatientAppointments from "../components/Patient/PatientAppointment";
+import { ReceptionistHome } from "../components/Receptionist/ReceptionistHome";
+import { ReceptionistAppointments } from "../components/Receptionist/ReceptionistAppointments";
+import ReceptionistPayments from "../components/Receptionist/ReceptionistPayments";
+import { useAxios } from "../useAxios";
+import {Register} from '../authServices/Register'
 
 const sidebarLinks = [
   {
@@ -110,8 +107,6 @@ const sidebarLinks = [
   },
 ];
 
-const password = "k#9!mX7$QzR4&pL9*vW2@tB6^yN1(uC8)mZ3_qA5+xK0=jF7~hD4[gE2]sP8{iO9}"
-
 const GeneralDashboard = () => {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -121,9 +116,13 @@ const GeneralDashboard = () => {
     setIsMobileMenuOpen(false);
   };
 
-
   return (
     <div className="min-h-screen bg-[#f5f9f7] text-gray-800">
+
+
+      <button
+      onClick={() => setReload(prev => !prev)}
+      >Reload</button>
 
 
       {/* =====================================================
@@ -535,9 +534,7 @@ const GeneralDashboard = () => {
         {/* ELEMENTS THROUGH OUTLET */}
         <main className="flex-1 min-w-0">
             <div className="p-4 sm:p-7 lg:p-9 xl:p-10">
-                <GeneralPayments
-                isReceptionist={true}
-                />
+                <Register />
             </div>
         </main>
 

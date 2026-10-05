@@ -18,9 +18,9 @@ function TextInput(
 
     
     return (
-        <div>
+        <div className='mt-2'>
             <div className="flex justify-start">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-0.5">
                     {`${lable} ${!isRequired ? "(optional)" : "" }`}
                 </label>
             </div>

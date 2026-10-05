@@ -1,10 +1,12 @@
 import React from 'react'
-import { GeneralHome } from '../../utils/GeneralHome'
+import { GeneralHome } from '../GeneralComponents/GeneralHome'
 
 function ReceptionistHome() {
   return (
     <div>
-        <GeneralHome/>
+        <GeneralHome
+        
+        />
     </div>
   )
 }

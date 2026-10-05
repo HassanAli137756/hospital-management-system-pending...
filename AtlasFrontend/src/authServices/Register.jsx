@@ -1,3 +1,6 @@
+
+/* ****************** OKAY ****************** */
+
 import React, { useState } from "react";
 import { RegisterForm } from "../forms/RegisterForm";
 
@@ -6,19 +9,6 @@ import { RegisterForm } from "../forms/RegisterForm";
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [avatarPreview, setAvatarPreview] = useState(null);
-
-  const handleAvatarChange = (e) => {
-    const file = e.target.files?.[0];
-
-    if (!file) return;
-
-    setAvatarPreview(URL.createObjectURL(file));
-  };
-
-
-  console.log("URL", avatarPreview);
-  
 
   return (
     <div className="min-h-screen bg-[#f3f8f6] flex items-center justify-center px-4 py-10 rounded-2xl">
