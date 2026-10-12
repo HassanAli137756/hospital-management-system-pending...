@@ -1,139 +1,123 @@
 
 import mongoose from "mongoose";
 import { User } from "../../models/User.model.js";
-import {APIError} from '../../utils/apiError.js'
-import {APIResponse} from '../../utils/apiResponse.js'
-import {asyncHandler} from '../../utils/asyncHander.js'
+import { APIError } from '../../utils/apiError.js'
+import { APIResponse } from '../../utils/apiResponse.js'
+import { asyncHandler } from '../../utils/asyncHander.js'
 import { Appointment } from "../../models/Appointment.model.js";
 
 
-const patientDashboardDetails = asyncHandler( async(req, res) =>
-{
+const patientDashboardDetails = asyncHandler(async (req, res) => {
     const requester = req.user
-    const userProfileId = req.body
+    const userProfileId = req.body?.userProfileId
 
 
-    if(!requester?._id || !userProfileId)
-    {
+    if (!requester?._id || !userProfileId) {
         throw new APIError(400, "Please provide requester and user profile IDs")
     }
 
     const homeData = await Appointment.aggregate(
-    [
+        [
+            {
+                $match: {
+                    userProfileId: new mongoose.Types.ObjectId(userProfileId),
+                }
+            },
             {
                 $lookup:
                 {
-                    from: "appointments",
+                    from: "users",
+                    localField: "doctor",
+                    foreignField: "_id",
+                    as: "doctor",
+
                     pipeline:
-                    [
-                        {
-                            $match:
+                        [
+
                             {
-                                $expr:
+                                $project:
                                 {
-                                    $eq: ["$userProfileId", userProfileId]
+                                    fullName: 1,
+                                    avatar: 1
                                 }
                             }
-                        },
-                        {
-                            $lookup:
-                            {
-                                from: "users",
-                                localField: "doctor",
-                                foreignField: "_id",
-                                as: "doctor"/* ,
-                                 
-                                pipeline:
-                                [
-                                    {
-                                        $addFields:
-                                        {
-                                            doctor:
-                                            {
-                                                $first: "$doctor"
-                                            } 
-                                        }
-                                    },
-                                    {
-                                        $project:
-                                        {
-                                            userName: 1,
-                                            avatar: 1
-                                        }
-                                    }
-                                ] */
-                            }
-                        }
-                    ],
-                    as: "allAppointments"
+                        ]
                 }
             },
-
+            {
+                $addFields:
+                {
+                    doctor:
+                    {
+                        $first: "$doctor"
+                    }
+                }
+            },
             {
                 $facet:
                 {
                     pendingAppointments:
-                    [
-                        {
-                            $match:
+                        [
                             {
-                                $expr:
+                                $match:
                                 {
-                                    $eq: ["$status", "pending"]
+                                    $expr:
+                                    {
+                                        $eq: ["$status", "pending"]
+                                    }
                                 }
                             }
-                        }
-                    ],
+                        ],
                     doneAppointments:
-                    [
-                        {
-                            $match:
+                        [
                             {
-                                $expr:
+                                $match:
                                 {
-                                    $eq: ["$status", "done"]
+                                    $expr:
+                                    {
+                                        $eq: ["$status", "done"]
+                                    }
                                 }
                             }
-                        }
-                    ],
+                        ],
                     paidPayments:
-                    [
-                        {
-                            $match:
+                        [
                             {
-                                $expr:
+                                $match:
                                 {
-                                    $eq: ["$paymentStatus", "paid"],
+                                    $expr:
+                                    {
+                                        $eq: ["$paymentStatus", "paid"],
+                                    }
+                                }
+                            },
+                            {
+                                $group:
+                                {
+                                    _id: null,
+                                    paidAmount: { $sum: "$paymentSection.paid" } || 0
                                 }
                             }
-                        },
-                        {
-                            $group:
-                            {
-                                _id: null,
-                                paidAmount: {$sum: "$paymentSection.paid"} || 0
-                            }
-                        }
-                    ],
+                        ],
                     pendingPayments:
-                    [
-                        {
-                            $match:
+                        [
                             {
-                                $expr:
+                                $match:
                                 {
-                                    $eq: ["$paymentStatus", "pending"],
+                                    $expr:
+                                    {
+                                        $eq: ["$paymentStatus", "pending"],
+                                    }
+                                }
+                            },
+                            {
+                                $group:
+                                {
+                                    _id: null,
+                                    pendingAmount: { $sum: "$paymentSection.payable" } || 0
                                 }
                             }
-                        },
-                        {
-                            $group:
-                            {
-                                _id: null,
-                                pendingAmount: {$sum: "$paymentSection.payable"} || 0
-                            }
-                        }
-                    ],
+                        ],
                 }
             },
 
@@ -168,13 +152,13 @@ const patientDashboardDetails = asyncHandler( async(req, res) =>
     )
 
     return res
-    .status(200)
-    .json(
-        new APIResponse(200, "Successfully fetched home information details", homeData[0])
-    )
+        .status(200)
+        .json(
+            new APIResponse(200, "Successfully fetched home information details", homeData[0])
+        )
 
 
 
-} )
+})
 
-export {patientDashboardDetails}
+export { patientDashboardDetails }

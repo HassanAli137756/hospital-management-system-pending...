@@ -15,10 +15,43 @@ import { ErrorMessage } from "./utils/ErrorMessage";
 import PatientAppointments from "./components/Patient/PatientAppointment";
 import PatientHistory from "./components/Patient/PatientHistory";
 import CustomButton from "./utils/CustomButton";
+import { useState } from "react";
+import {SelectInput} from './utils/CustomSelectInput'
+
+const componentOptions =
+[
+  {
+    value: 'pHistory',
+    label: 'Patient History'
+  },
+  {
+    value: 'pHome',
+    label: 'Patient Home'
+  },
+  {
+    value: 'login',
+    label: 'Login'
+  },
+  {
+    value: 'register',
+    label: 'Register'
+  },
+  {
+    value: 'pAppointments',
+    label: 'Patient Appointments'
+  },
+  {
+    value: 'appointmentForm',
+    label: 'Appointment Form'
+  },
+]
+
+
 function App() {
 
   let { data, error, loading, request, setError, setData, setLoading } = useAxios()
   const dispatch = useDispatch()
+  const [component, setComponent] = useState("pHistory")
 
 
   const fetchDoctors = async () => {
@@ -65,10 +98,46 @@ function App() {
       {
         !loading && data &&
         <div>
-          <PatientHistory />
-          <BookAppointment />
-          <Login />
-          <Register />
+          
+          <SelectInput
+          onChange={(value) => setComponent(value)}
+          name={"Select Component"}
+          defaultValue="pHistory"
+          options={componentOptions}
+
+          />
+
+          {
+            component == "pHistory" &&
+            <PatientHistory />
+          }
+          
+          {
+            component == "pHome" &&
+            <PatientHome />
+          }
+          
+          {
+            component == "login" &&
+            <Login />
+          }
+          
+          {
+            component == "register" &&
+            <Register />
+          }
+          
+          {
+            component == "pAppointments" &&
+            <PatientAppointments />
+          }
+
+          {
+            component == "appointmentForm" &&
+            <BookAppointment />
+          }
+          
+          
         </div>
       }
     </div>

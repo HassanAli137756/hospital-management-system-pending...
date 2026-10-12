@@ -94,7 +94,7 @@ function TodaysAppointment({ appointments = [] }) {
                     </p>
 
                     <h3 className="mt-1 text-lg font-semibold text-gray-900">
-                      {appointment.doctor}
+                      {appointment.doctor?.fullName}
                     </h3>
 
                   </div>
