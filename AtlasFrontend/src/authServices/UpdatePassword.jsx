@@ -2,10 +2,14 @@ import React from "react";
 import { Login } from "./Login";
 import { LoginForm } from "../forms/LoginForm";
 import { UpdatePasswordForm } from "../forms/UpdatePasswordForm";
+import { useSelector } from "react-redux";
+import { ErrorMessage } from "../utils/ErrorMessage";
 
 
 
 const UpdatePassword = () => {
+  const RTKUser = useSelector(state => state.userReducer.userInfo)
+
   return (
     <div className="min-h-screen bg-[#f4f8f6] flex items-center justify-center p-4">
 
@@ -244,7 +248,12 @@ const UpdatePassword = () => {
             </div>
 
 
-            <UpdatePasswordForm />
+            {
+              RTKUser?.userData?._id ?
+              <UpdatePasswordForm /> :
+              <ErrorMessage message="Please login to update your password" />
+
+            }
             
             <div className="mt-8 pt-6 border-t border-gray-100">
 

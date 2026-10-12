@@ -28,6 +28,7 @@ const appointmentSearcher = asyncHandler( async (req, res) =>
     const user = req.user
     const 
     {
+        userProfileId,
         name,
         email,
         cellNo,
@@ -105,6 +106,11 @@ const appointmentSearcher = asyncHandler( async (req, res) =>
     if(forSession?.length > 0)
     {
         options.forSession = forSession
+    }
+
+    if(forSession?.userProfileId > 0)
+    {
+        options.userProfileId = userProfileId
     }
 
     if(isPaymentBased == 1)

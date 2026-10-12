@@ -21,6 +21,12 @@ const appointmentSchema = new Schema(
         ref: "Profile",
         required: true
     },
+    paymentStatus:
+    {
+        type: String,
+        enum: ["pending", "paid"],
+        default: "pending"
+    },
     generalPatientInfo:
     {
         type:
@@ -59,14 +65,15 @@ const appointmentSchema = new Schema(
     forSession:
     {
         type: String,
-        enum: ["cupping", "physio", "dry-needling", "checkup"],
+        enum: ["cupping", "physiotherapy", "dryNeedling", "checkUp"],
         trim: true,
         default: "checkup",
         required: true
     },
-    payment:
+    paymentSection:
     {
-        type: Number,
+        payable: Number,
+        paid: Number
     },
     diagnoses:
     {

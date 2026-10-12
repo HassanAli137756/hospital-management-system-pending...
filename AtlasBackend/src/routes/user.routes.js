@@ -9,6 +9,8 @@ import {authMiddleware} from '../middlewares/authMiddleware.middleware.js'
 import { getCurrentUser } from '../controllers/user/getCurrentUser.controller.js'
 import {refreshingAccessToken} from '../controllers/user/refreshingAccessToken.controller.js'
 import { logout } from '../controllers/user/logout.controller.js'
+import { updatePassword } from '../controllers/user/updatePassword.controller.js'
+import { makeTimesAvaialble, patientHistoryDetails } from '../controllers/testing.controller.js'
 
 
 export const userRouter = express.Router()
@@ -24,6 +26,9 @@ userRouter.route('/user-register').post(upload.single("avatar"), register)
 // OKAY 
 userRouter.route('/user-login').post(login)
 
+
+// OKAY 
+userRouter.route('/update-password').patch(authMiddleware, updatePassword)
 
 
 // OKAY 
@@ -43,6 +48,12 @@ userRouter.route('/refresh-tokens').post(refreshingAccessToken)
 
 // OKAY 
 userRouter.route("/user-logout").post(authMiddleware, logout)
+
+
+
+userRouter.route("/testing/get-patient-history").get(patientHistoryDetails)
+
+userRouter.route("/testing/make-times-available").get(makeTimesAvaialble)
 
 
 

@@ -43,9 +43,10 @@ const addAppointment = asyncHandler( async (req, res) =>
         doctor,
         time,
         date,
+        day,
         forSession,
         diagnoses,
-        patientId,
+        profileId,
         payment,
         status="pending"
     } = req.body
@@ -53,66 +54,51 @@ const addAppointment = asyncHandler( async (req, res) =>
     
 
     const creater = req.user
-    let profileId = patientId
 
     if(!creater?._id)
     {
         throw new APIError(401, "Please login to book an appointment")
     }
 
-    console.log("ProfileId: ", profileId, patientId);
     
     if(
-        [patientName, doctor, time, date, forSession, cellNo]
+        [patientName, doctor, time, date, forSession, cellNo, profileId, day]
         .some(field => !field || field?.trim() == "")
     )
     {
-        console.log("Please Provide all fields", patientName, doctor, time, date, forSession, profileId);
         throw new APIError(400, "Please provide all required fields")
         
 
     }
 
-    
-    if(creater?.role === "patient")
+    const DBDoctor = await User.findById(doctor).select("_id doctorField")
+
+    if(!DBDoctor?._id)
     {
-        const DBProfile = await Profile.findOne({patientAccount: creater._id})
-
-        console.error("role is patient")
-        
-        if(!DBProfile?._id)
-        {
-            const newProfile = await Profile.create({cellNo: cellNo, name: patientName, patientAccount: patientId})
-
-            if(!newProfile._id)
-            {
-                throw new APIError(500, "Failed to create new profile, try again")
-            }
-
-            profileId = newProfile._id
-
-        }
-        else
-        {
-
-            profileId = DBProfile._id
-        }
+        throw new APIError(500, "Failed to fetch doctor from database")
     }
 
-    
-    if(!profileId)
+    if(!DBDoctor?.doctorField?.onDuty)
     {
-        throw new APIError(400, "Please provide patient profile-id")
-        
-
+        throw new APIError(400, "Sorry to say your selected doctor is on leave")
     }
 
+    const DBSelectedTime = DBDoctor.doctorField.times[day.toLowerCase()].filter(item => item.time == time)
+
+    console.log("Selected Time: ", DBSelectedTime);
     
 
+
+    if(!DBSelectedTime[0].availability || !DBSelectedTime[0].status)
+    {
+        throw new APIError(400, "Your selected time is not available at that time")
+    }
+
+   
     const bookingDate = new Date(date)
     const currentDate = new Date()
 
-    if(bookingDate.toLocaleDateString("en-US", {weekday: "long"}).toLocaleLowerCase() === "sunday")
+    if(day?.toLowerCase() === "sunday" || bookingDate.toLocaleDateString("en-US", {weekday: "long"}).toLocaleLowerCase() == "sunday")
     {
         throw new APIError(400, "Sunday is off, please booked appointment on another day")
     }
@@ -133,6 +119,7 @@ const addAppointment = asyncHandler( async (req, res) =>
     {
         throw new APIError(500, "Failed to generate times")
     }
+
 
 
     const newAppointment = await Appointment.create(
@@ -157,10 +144,22 @@ const addAppointment = asyncHandler( async (req, res) =>
             time: time,
             timeOfUpdation: updationTimeLine
         },
-        userProfileId: profileId
+        userProfileId: profileId,
+        paymentSection:
+        {
+            payable: 1000
+        }
     }
     )
 
+    if(!newAppointment?._id)
+    {
+        throw new APIError(500, "Failed to book this time, try again")
+    }
+
+    DBDoctor.doctorField.times[day?.toLowerCase()] = DBDoctor.doctorField.times[day?.toLowerCase()].map(item => (item.time == time ? {...item, availability: false} : item))
+
+    await DBDoctor.save({validateBeforeSave: false})
 
     return res
     .status(201)

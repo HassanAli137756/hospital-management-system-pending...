@@ -2,7 +2,6 @@
 import {api} from './api'
 
 const useAxios = () => {
-  console.log("Request executed");
   
 
   const [error, setError] = useState("");

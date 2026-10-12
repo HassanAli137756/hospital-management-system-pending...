@@ -30,7 +30,7 @@ function TextInput(
                 type="text"
                 name={name}
                 placeholder={placeholder}
-                {...(register ? register(name, isRequired ? {required: `Please fill this required field`} : null) : null)}
+                {...(register ? register(name, isRequired ? {required: `Please fill this required field`} : {}) : {})}
                 className="w-full h-12 px-4 rounded-xl border border-gray-200 bg-gray-50
                   text-gray-900 placeholder:text-gray-400
                   outline-none transition

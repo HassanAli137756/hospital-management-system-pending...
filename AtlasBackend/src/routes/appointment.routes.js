@@ -6,6 +6,8 @@ import { appointmentSearcher } from '../controllers/appointment/searcher.control
 import { updatingAppointment } from '../controllers/appointment/updateAppointment.controller.js'
 import { updatingPayment } from '../controllers/appointment/updatePayment.controller.js'
 import { updatingStatus } from '../controllers/appointment/updateStatus.controller.js'
+import { patientDashboardDetails } from '../controllers/appointment/pateintHome.controller.js'
+import { patientHistoryDetails } from '../controllers/appointment/patientHistory.controller.js'
 
 
 const appointmentRouter = express.Router()
@@ -33,6 +35,14 @@ appointmentRouter.route("/searcher").post(authMiddleware, appointmentSearcher)
 
 // OKAY
 appointmentRouter.route("/update-appointment/:appointmentId").patch(authMiddleware, updatingAppointment)
+
+
+// OKAY
+appointmentRouter.route("/get-patient-home").post(authMiddleware, patientDashboardDetails)
+
+
+
+appointmentRouter.route("/get-patient-history").post(authMiddleware, patientHistoryDetails)
 
 
 

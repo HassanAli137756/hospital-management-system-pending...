@@ -14,6 +14,7 @@ import {updateTimeStatus} from '../controllers/doctor/updateTimeStatus.controlle
 
 import { authMiddleware } from '../middlewares/authMiddleware.middleware.js'
 import { verifyRole } from '../middlewares/verifyRole.middleware.js'
+import { getAllDoctors } from '../controllers/doctor/getAllDoctors.controller.js'
 
 const doctorRouter = express.Router()
 
@@ -45,6 +46,10 @@ doctorRouter.route("/delete-time").delete(authMiddleware, verifyRole("doctor"), 
 
 // OKAY
 doctorRouter.route("/update-time-status").patch(authMiddleware, verifyRole("doctor"), updateTimeStatus)
+
+
+doctorRouter.route("/get-all-doctor-times").get(authMiddleware, getAllDoctors)
+
 
 
 

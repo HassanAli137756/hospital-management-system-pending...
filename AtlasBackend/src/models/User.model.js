@@ -182,11 +182,7 @@ const UserSchema = new Schema(
                     ]
             }
             ,
-            onDuty:
-            {
-                type: Boolean,
-                default: true
-            }
+            onDuty: Boolean
         }
 
 

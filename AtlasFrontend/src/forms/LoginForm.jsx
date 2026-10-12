@@ -80,6 +80,7 @@ function LoginForm() {
         name={"userRefrence"}
         register={register}
         lable='User-Name/Email'
+        isRequired={false}
         placeholder='Enter user-name or email'
       />
 

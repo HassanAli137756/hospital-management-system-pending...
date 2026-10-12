@@ -2,10 +2,16 @@ import React from "react";
 import { UpdatePassword } from "./UpdatePassword";
 import { UpdatePasswordForm } from "../forms/UpdatePasswordForm";
 import { UpdateProfileForm } from "../forms/UpdateProfileForm";
+import { useSelector } from "react-redux";
+import { ScreenBlankError } from "../utils/ScreenBlankError";
+import { ErrorMessage } from "../utils/ErrorMessage";
 
 
 
 const UpdateProfile = () => {
+
+  const RTKUser = useSelector(state => state.userReducer.userInfo)
+
   return (
     <div className="min-h-screen bg-[#f4f8f6] flex items-center justify-center p-4">
 
@@ -240,7 +246,18 @@ const UpdateProfile = () => {
 
 
             
-            <UpdateProfileForm />
+            {
+              RTKUser?.userData?._id ?
+              <UpdateProfileForm
+              currentAddress={RTKUser?.userData?.address}
+              currentAvatar={RTKUser?.userData?.avatar}
+              currentEmail={RTKUser?.userData?.email}
+              currentFullName={RTKUser?.userData?.fullName}
+              currentPhoneNo={RTKUser?.userData?.cellNo}
+              
+              /> :
+              <ErrorMessage message="Please login to update your profile" />
+            }
 
 
             {/* Back / Cancel */}

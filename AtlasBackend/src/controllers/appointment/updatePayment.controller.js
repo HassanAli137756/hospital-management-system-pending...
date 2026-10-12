@@ -56,7 +56,8 @@ const updatingPayment = asyncHandler( async (req, res) =>
 
     if((requester.role == "receptionist" && allowedDoctor.includes(appointment.doctor)) || requester.role == "admin")
     {
-        appointment.payment = Number(payment)
+        appointment.paymentSection.paid = Number(payment)
+        appointment.paymentStatus = "paid"
 
         await appointment.save({validateBeforSave: false})
 

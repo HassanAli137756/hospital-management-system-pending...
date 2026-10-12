@@ -1,33 +1,93 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import TextInput from '../utils/TextInput'
 import PasswordInput from '../utils/PasswordInput'
 import { ImageInput } from '../utils/ImageInput'
 import CustomButton from '../utils/CustomButton'
 import { useForm } from 'react-hook-form'
+import { useAxios } from '../useAxios'
+import { useDispatch, useSelector } from 'react-redux'
+import { setUserInfo } from '../Redux/userSlice'
+import Loading from '../utils/Loading'
+import { ErrorMessage } from '../utils/ErrorMessage'
 
 function UpdateProfileForm(
-{
-    currentEmail="hassanali@gmail.com",
-    currentFullName="Hassan Ali",
-    currentAddres="Sabri colony Okara",
-    currentPhoneNo="0323-7284316"
-}
+    {
+        currentEmail = "",
+        currentFullName = "",
+        currentAddress = "",
+        currentAvatar = "",
+        currentPhoneNo = ""
+    }
 ) {
 
     const { handleSubmit, formState: { errors }, register } = useForm()
+    const dispatch = useDispatch()
+    let { data, error, loading, request, setData, setError } = useAxios()
 
-    const updateProfile = (data) => {
-        console.log("data: ", data);
+    const removeError = () => {
+        setTimeout(() => {
+            setError("")
+        }, 2500);
+    }
+
+    const updateProfile = async (data) => {
+
+        if (
+            [
+                data?.["fullName"],
+                data?.["email"],
+                data?.["address"],
+                data?.["cellNo"],
+            ].some(field => !field || field?.trim() == "")
+        ) {
+            setError("Please provide all fields without extra blank spaces")
+            return;
+        }
+
+        if (data?.["cellNo"].replace("-", "")?.length <= 10) {
+            setError("Phone enter a corret Pakistani phone number")
+            return;
+        }
+
+
+        const formData = new FormData()
+
+        formData.append("fullName", data["fullName"])
+        formData.append("email", data["email"])
+        formData.append("address", data["address"])
+        formData.append("cellNo", data["cellNo"])
+        formData.append("avatar", data?.["avatar"]?.[0])
+
+
+
+        await request("/users/update-account-details", "patch", formData)
+
 
     }
 
 
+    useEffect(() => {
+        if (!loading && data?._id) {
+            dispatch(setUserInfo(
+                {
+                    isLoadingUser: false,
+                    isAuthorized: true,
+                    userData: data,
+                }))
+        }
+    }, [data, error, loading])
+
+
+
     return (
         <form
-            onSubmit={handleSubmit(updateProfile)}
-            className="space-y-5">
+            onSubmit={handleSubmit(updateProfile)}>
 
             {/* Important: connect these fields with react-hook-form later */}
+            {
+                loading &&
+                (<Loading />)
+            }
 
 
 
@@ -50,7 +110,7 @@ function UpdateProfileForm(
             />
 
             <TextInput
-                defaultValue={currentAddres}
+                defaultValue={currentAddress}
                 errors={errors}
                 name={"address"}
                 register={register}
@@ -70,7 +130,7 @@ function UpdateProfileForm(
 
 
             <ImageInput
-                defaultImageSrc={"https://res.cloudinary.com/jdcjxvhd/image/upload/v1788344099/dzmdpezraj2tpya8airq.png"}
+                defaultImageSrc={currentAvatar}
                 errors={errors}
                 name={"avatar"}
                 register={register}
@@ -105,6 +165,12 @@ function UpdateProfileForm(
                     type='submit'
 
                 />
+
+                <br />
+                {
+                    error?.length > 0 &&
+                    <ErrorMessage message={error} />
+                }
             </div>
 
         </form>
