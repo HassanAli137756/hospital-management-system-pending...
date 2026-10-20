@@ -84,7 +84,7 @@ function AppointmentForm(
 
     }
 
-    const bookTime = async (data) => 
+    const bookTime = async (formData) => 
     {
         const profileId = RTKUser?.userData?.role == "patient" ? RTKUser?.userData?.userProfileId : userProfile?._id
 
@@ -96,19 +96,19 @@ function AppointmentForm(
         if (
             [
                 doctorId,
-                data?.["patientName"],
-                data?.["cellNo"],
-                data?.["day"],
-                data?.["time"],
+                formData?.["patientName"],
+                formData?.["cellNo"],
+                formData?.["day"],
+                formData?.["time"],
             ].some(field => !field || field?.trim() == "")
         ) {
             setError("Please provide all required fields without extra blank spaces")
             return;
         }
 
-        data = 
+        formData = 
         {
-            ...data, 
+            ...formData, 
             doctor: doctorId, 
             date: date.toLocaleDateString(), 
             profileId: profileId
@@ -117,7 +117,7 @@ function AppointmentForm(
 
         await request("/appointments/add-appointment", "post", data)
 
-        if(data?.success && data?.statusCode == 200 || 201)
+        if(data?.success && (data?.statusCode == 200 || data?.statusCode == 201))
         {
             setMsg("Successfully booked appointment")
             removeMsg()
