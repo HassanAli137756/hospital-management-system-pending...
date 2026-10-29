@@ -15,8 +15,8 @@ import React from "react";
 
 
 function AppointmentCard({ appointment }) {
-  const isConfirmed = appointment.status === "Confirmed";
-  const isPaid = appointment.payment === "Paid";
+  const isConfirmed = appointment.status === "done";
+  const isPaid = appointment?.paymentStatus == 'paid';
 
   return (
     <div className="group p-5 transition duration-200 hover:bg-gray-50/60">
@@ -31,19 +31,23 @@ function AppointmentCard({ appointment }) {
           </div>
 
           <div className="min-w-0">
-            <h3 className="truncate font-semibold text-gray-900">
-              {appointment.patient}
+            <div className="flex justify-start">
+              <h3 className="truncate font-semibold text-gray-900">
+              {appointment?.generalPatientInfo?.patientName}
             </h3>
+            </div>
 
-            <p className="mt-0.5 truncate text-sm text-gray-500">
-              {appointment.treatment}
+            <div className="flex justify-start">
+              <p className="mt-0.5 truncate text-sm text-gray-500">
+              {appointment.forSession?.slice(0, 1)?.toUpperCase() + appointment?.forSession?.slice(1, appointment?.forSession?.length)}
             </p>
+            </div>
 
             <div className="mt-1 flex items-center gap-1.5">
               <Stethoscope className="h-3.5 w-3.5 text-gray-400" />
 
               <p className="truncate text-xs text-gray-400">
-                {appointment.doctor}
+                {appointment.doctor?.fullName}
               </p>
             </div>
           </div>
@@ -60,14 +64,14 @@ function AppointmentCard({ appointment }) {
 
             <div className="flex justify-center items-center gap-1.5 text-sm font-medium text-gray-600">
               <Clock3 className="h-4 w-4 text-emerald-600" />
-              {appointment.time}
+              {appointment.times.time}
             </div>
           </div>
 
           {/* Payment */}
           <div>
             <p className="mb-1 text-[10px] font-medium uppercase tracking-wide text-gray-400">
-              Payment
+              Paid
             </p>
 
             <div className="flex justify-center items-center gap-1.5">
@@ -83,12 +87,9 @@ function AppointmentCard({ appointment }) {
                     isPaid ? "text-emerald-600" : "text-amber-600"
                   }`}
                 >
-                  {appointment.payment}
+                  Rs. {Number(appointment?.paymentSection?.paid || 0).toLocaleString()}
                 </p>
 
-                <p className="text-xs text-gray-400">
-                  Rs. {Number(appointment.amount).toLocaleString()}
-                </p>
               </div>
             </div>
           </div>
@@ -112,7 +113,7 @@ function AppointmentCard({ appointment }) {
                 <Clock3 className="h-3.5 w-3.5" />
               )}
 
-              {appointment.status}
+              {appointment.status?.slice(0, 1)?.toUpperCase() + appointment?.status?.slice(1, appointment?.status?.length)}
             </span>
           </div>
 

@@ -7,7 +7,7 @@ import { asyncHandler } from '../../utils/asyncHander.js'
 import { Appointment } from "../../models/Appointment.model.js";
 
 
-const patientDashboardDetails = asyncHandler(async (req, res) => {
+const patientPaymentDetails = asyncHandler(async (req, res) => {
     const requester = req.user
     const userProfileId = req.body?.userProfileId
 
@@ -63,7 +63,7 @@ const patientDashboardDetails = asyncHandler(async (req, res) => {
                                 {
                                     $expr:
                                     {
-                                        $eq: ["$status", "pending"]
+                                        $eq: ["$paymentStatus", "pending"]
                                     }
                                 }
                             }
@@ -128,6 +128,14 @@ const patientDashboardDetails = asyncHandler(async (req, res) => {
                     {
                         $size: "$doneAppointments"
                     },
+                    paidPayments:
+                    {
+                        $first: "$paidPayments"
+                    },
+                    pendingPayments:
+                    {
+                        $first: "$pendingPayments"
+                    },
                 }
             },
 
@@ -138,14 +146,6 @@ const patientDashboardDetails = asyncHandler(async (req, res) => {
                     doneAppointmentsCounts: 1,
                     pendingPayments: 1,
                     paidPayments: 1,
-                    userName: 1,
-                    fullName: 1,
-                    avatar: 1,
-                    physio: 1,
-                    cupping: 1,
-                    dryNeedling: 1,
-                    checkup: 1,
-                    totalCups: 1,
                 }
             }
         ]
@@ -161,4 +161,4 @@ const patientDashboardDetails = asyncHandler(async (req, res) => {
 
 })
 
-export { patientDashboardDetails }
+export { patientPaymentDetails }

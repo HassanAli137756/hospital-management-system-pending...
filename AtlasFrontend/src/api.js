@@ -25,7 +25,7 @@ api.interceptors.response.use(
         
         const originalRequest = err.config
 
-        if(err?.response?.status === 401 && err?.response?.data?.message === "jwt have expired")
+        if(err?.response?.status === 401 && err?.response?.data?.errors?.[0] === "jwt expired")
         {
             try 
             {

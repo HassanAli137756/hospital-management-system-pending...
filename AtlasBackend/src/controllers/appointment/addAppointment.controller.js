@@ -21,6 +21,9 @@ const generateTimes = (appointmentRawDate, appointmentRawTime) =>
     const appointmentDate = new Date(appointmentRawDate)
     const [hours, minutes] = appointmentRawTime.split(":").map(field => field)
 
+    console.log("appointmentDate", appointmentDate);
+    
+
     appointmentDate.setHours(hours ? Number(hours) + 12 : 0, Number(minutes) || 0, 0, 0)
 
     const sessionTimeLine = appointmentDate.getTime()
@@ -47,7 +50,8 @@ const addAppointment = asyncHandler( async (req, res) =>
         forSession,
         diagnoses,
         profileId,
-        payment,
+        payable=0,
+        paid=0,
         status="pending"
     } = req.body
 
@@ -85,11 +89,10 @@ const addAppointment = asyncHandler( async (req, res) =>
 
     const DBSelectedTime = DBDoctor.doctorField.times[day.toLowerCase()].filter(item => item.time == time)
 
-    console.log("Selected Time: ", DBSelectedTime);
     
 
 
-    if(!DBSelectedTime[0].availability || !DBSelectedTime[0].status)
+    if(!DBSelectedTime[0]?.availability || !DBSelectedTime[0]?.status)
     {
         throw new APIError(400, "Your selected time is not available at that time")
     }
@@ -97,6 +100,9 @@ const addAppointment = asyncHandler( async (req, res) =>
    
     const bookingDate = new Date(date)
     const currentDate = new Date()
+
+    console.log("bookingDate: ", bookingDate, date);
+    
 
     if(day?.toLowerCase() === "sunday" || bookingDate.toLocaleDateString("en-US", {weekday: "long"}).toLocaleLowerCase() == "sunday")
     {
@@ -114,6 +120,11 @@ const addAppointment = asyncHandler( async (req, res) =>
   
     const {cancellTimeLine, sessionTimeLine, updationTimeLine} = generateTimes(date, time)
     
+    console.log("cancellingTime", cancellTimeLine);
+    console.log("sessionTimeLine", sessionTimeLine);
+    console.log("updationTimeLine", updationTimeLine);
+    
+
 
     if(!cancellTimeLine || !sessionTimeLine )
     {
@@ -124,10 +135,10 @@ const addAppointment = asyncHandler( async (req, res) =>
 
     const newAppointment = await Appointment.create(
     {
+        paymentStatus: paid > 0 ? "paid" : "pending",
         createdBy: creater?._id,
         diagnoses,
         doctor,
-        payment,
         forSession,
         generalPatientInfo: 
         {
@@ -147,7 +158,8 @@ const addAppointment = asyncHandler( async (req, res) =>
         userProfileId: profileId,
         paymentSection:
         {
-            payable: 1000
+            payable,
+            paid
         }
     }
     )

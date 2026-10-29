@@ -93,4 +93,4 @@ function PasswordInput(
     )
 }
 
-export default PasswordInput
+export {PasswordInput}

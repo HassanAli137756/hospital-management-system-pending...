@@ -24,6 +24,7 @@ const userSlice = createSlice(
 
         removeUserInfo: (state, action) =>
         {
+
             state.userInfo = 
             {
                 isLoadingUser: false,

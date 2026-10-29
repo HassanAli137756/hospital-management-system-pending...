@@ -49,4 +49,4 @@ return (
 );
 };
 
-export default Loading;
+export {Loading};

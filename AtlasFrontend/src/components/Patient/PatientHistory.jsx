@@ -13,39 +13,12 @@ import { PatientHistoryCard } from "./utils/PatientHistoryCard";
 import { useAxios } from "../../useAxios";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import Loading from "../../utils/Loading";
+import {Loading} from "../../utils/Loading";
 import { ErrorMessage } from "../../utils/ErrorMessage";
-import CustomButton from "../../utils/CustomButton";
+import {CustomButton} from "../../utils/CustomButton";
 
 
-   
-
-const weeklySessions = [
-{
-id: 1,
-doctor: "Dr. Ahmed Khan",
-treatment: "Physiotherapy",
-date: "Thursday, Oct 01",
-time: "05:00 PM",
-status: "Completed",
-},
-{
-id: 2,
-doctor: "Dr. Muhammad Ali",
-treatment: "Cupping Therapy",
-date: "Friday, Oct 02",
-time: "06:30 PM",
-status: "Completed",
-},
-{
-id: 3,
-doctor: "Dr. Usman",
-treatment: "Dry Needling",
-date: "Saturday, Oct 03",
-time: "04:30 PM",
-status: "Upcoming",
-},
-];
+ 
 
 const PatientHistory = () => {
 
@@ -68,7 +41,10 @@ const PatientHistory = () => {
 
     useEffect(() =>
     {
-      if(!RTKUser?.userData?.userProfileId) return;
+      if(!RTKUser?.userData?.userProfileId) 
+    {
+      setError("There is no user provided");
+    }
       fetchHistory()
     }, [RTKUser])
 
@@ -105,4 +81,4 @@ return (
 );
 };
 
-export default PatientHistory;
+export {PatientHistory};

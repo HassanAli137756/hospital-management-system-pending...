@@ -10,11 +10,11 @@ import {
 } from "lucide-react";
 import { LoginForm } from "../forms/LoginForm";
 import { AppointmentForm } from "../forms/AppointmentForm";
-import Loading from "../utils/Loading";
+import {Loading} from "../utils/Loading";
 import { ErrorMessage } from "../utils/ErrorMessage";
 import { useAxios } from "../useAxios";
 import { useEffect } from "react";
-import CustomButton from "../utils/CustomButton";
+import {CustomButton} from "../utils/CustomButton";
 
 
 const BookAppointment = () => {
@@ -161,4 +161,4 @@ const BookAppointment = () => {
   );
 };
 
-export default BookAppointment;
+export {BookAppointment};

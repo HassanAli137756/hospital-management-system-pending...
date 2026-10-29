@@ -12,20 +12,21 @@ import {
   CircleDollarSign,
 } from "lucide-react";
 import { useSelector } from 'react-redux';
-import TodaysAppointment from './utils/TodaysAppointment';
-import Loading from '../../utils/Loading';
+import {Loading} from '../../utils/Loading';
 import { ErrorMessage } from '../../utils/ErrorMessage';
 import { useAxios } from '../../useAxios';
-import SummerCards from './utils/SummerCards';
-import CustomButton from '../../utils/CustomButton';
+import {SummerCards} from './utils/SummerCards';
+import {CustomButton} from '../../utils/CustomButton';
 import { useEffect } from 'react';
+import {PendingAppointmentCards} from './utils/TodaysAppointment';
+import { useNavigate } from 'react-router-dom';
 
-export default function PatientHome() {
+function PatientHome() {
 
   let { data, error, loading, request, setError } = useAxios()
   const [todayAppointments, setTodayAppointments] = useState([])
   const RTKUser = useSelector(state => state.userReducer.userInfo)
-
+  const navigate = useNavigate()
   
 
   const fetchHomeDetails = async () => {
@@ -35,7 +36,6 @@ export default function PatientHome() {
       return;
     }
 
-  console.log("RTKUser: ", RTKUser?.userData?.userProfileId);
 
     await request("/appointments/get-patient-home", "post", {userProfileId: RTKUser?.userData?.userProfileId})
 
@@ -45,6 +45,10 @@ export default function PatientHome() {
   
   useEffect(() =>
   {
+    if(!RTKUser?.userData?.userProfileId) 
+    {
+      setError("There is no user provided");
+    }
     fetchHomeDetails()
   }, [RTKUser])
   
@@ -118,16 +122,16 @@ export default function PatientHome() {
         <div>
           
           
-              <TodaysAppointment
-              appointments={todayAppointments}
+              <PendingAppointmentCards
+              appointments={data?.todaysAppointments || []}
               />
       <br />
 
           <SummerCards 
-          doneSessions={data.doneAppointmentsCounts}
-          paidPayment={data.paidPayments?.[0].paidAmount}
-          pendingPayment={data.pendingPayments?.[0].pendingAmount}
-          pendingSessions={data.pendingAppointments?.length}
+          doneSessions={{value:data.doneAppointmentsCounts || 0, allowed:true}}
+          paidPayment={{value:data.paidPayments?.paidAmount || 0, allowed:true}}
+          pendingPayment={{value:data.pendingPayments?.pendingAmount || 0, allowed:true}}
+          pendingSessions={{value:data.pendingAppointments?.length || 0, allowed:true}}
           />
       <br />
 
@@ -177,6 +181,7 @@ export default function PatientHome() {
 
           {/* Booking Button */}
           <button
+            onClick={() => navigate("/book-appointment")}
             type="button"
             className="
               inline-flex items-center justify-center gap-2
@@ -210,3 +215,5 @@ export default function PatientHome() {
     </div>
   );
 }
+
+export {PatientHome}

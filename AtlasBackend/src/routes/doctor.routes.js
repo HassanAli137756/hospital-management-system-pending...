@@ -15,6 +15,9 @@ import {updateTimeStatus} from '../controllers/doctor/updateTimeStatus.controlle
 import { authMiddleware } from '../middlewares/authMiddleware.middleware.js'
 import { verifyRole } from '../middlewares/verifyRole.middleware.js'
 import { getAllDoctors } from '../controllers/doctor/getAllDoctors.controller.js'
+import { doctorHomeDetails } from '../controllers/doctor/doctorHome.controller.js'
+import { doctorPaymentDetails } from '../controllers/doctor/doctorPayments.controller.js'
+import { doctorAppointmentDetails } from '../controllers/doctor/doctorAppointment.js'
 
 const doctorRouter = express.Router()
 
@@ -48,7 +51,21 @@ doctorRouter.route("/delete-time").delete(authMiddleware, verifyRole("doctor"), 
 doctorRouter.route("/update-time-status").patch(authMiddleware, verifyRole("doctor"), updateTimeStatus)
 
 
+
+// OKAY
 doctorRouter.route("/get-all-doctor-times").get(authMiddleware, getAllDoctors)
+
+
+// OKAY
+doctorRouter.route("/get-doctor-home").post(authMiddleware, verifyRole("doctor"), doctorHomeDetails)
+
+
+// OKAY
+doctorRouter.route("/get-doctor-payments").post(authMiddleware, verifyRole("doctor"), doctorPaymentDetails)
+
+
+
+doctorRouter.route("/get-doctor-appointment/:doctorId").get(authMiddleware, verifyRole("doctor"), doctorAppointmentDetails)
 
 
 

@@ -1,11 +1,11 @@
 import React from 'react'
-import TextInput from '../utils/TextInput'
-import PasswordInput from '../utils/PasswordInput'
+import {TextInput} from '../utils/TextInput'
+import {PasswordInput} from '../utils/PasswordInput'
 import { ImageInput } from '../utils/ImageInput'
-import CustomButton from '../utils/CustomButton'
+import {CustomButton} from '../utils/CustomButton'
 import { useForm } from 'react-hook-form'
 import { useAxios } from '../useAxios'
-import Loading from '../utils/Loading'
+import {Loading} from '../utils/Loading'
 import { ErrorMessage } from '../utils/ErrorMessage'
 
 function UpdatePasswordForm() {

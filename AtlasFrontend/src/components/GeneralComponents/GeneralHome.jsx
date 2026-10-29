@@ -14,45 +14,15 @@ Stethoscope,
 
 const GeneralHome = (
 {
-    totalBookingTimes="15",
-    totalAppointments="14",
-    doneAppointments="5",
-    paidPayment="5000",
-    pendingPayment="2000",
-    todayAppointments = [
-    {
-    id: 1,
-    patient: "Ali Raza",
-    doctor: "Dr. Ahmed Khan",
-    treatment: "Physiotherapy",
-    time: "04:00 PM",
-    status: "Confirmed",
-    },
-    {
-    id: 2,
-    patient: "Sara Ahmed",
-    doctor: "Dr. Muhammad Ali",
-    treatment: "Cupping Therapy",
-    time: "05:00 PM",
-    status: "Pending",
-    },
-    {
-    id: 3,
-    patient: "Hamza Tariq",
-    doctor: "Dr. Usman",
-    treatment: "Dry Needling",
-    time: "05:30 PM",
-    status: "Confirmed",
-    },
-    {
-    id: 4,
-    patient: "Ayesha Noor",
-    doctor: "Dr. Ahmed Khan",
-    treatment: "Physiotherapy",
-    time: "06:30 PM",
-    status: "Confirmed",
-    },
-    ]
+    doctors=[],
+    userName="User",
+    pendingAppointmentCounts=0,
+    totalAppointments=0,
+    doneAppointments=0,
+    paidPayment=0,
+    pendingPayment=0,
+    todayAppointments=[],
+    isReceptionist=false
 }
 ) => {
 const stats = [
@@ -100,8 +70,11 @@ icon: CircleDollarSign,
 },
 ];
 
-const completionPercentage = Math.floor((Number(totalAppointments) * 100) / Number(totalBookingTimes))
-const completionWidth = `w-[${completionPercentage}%]`
+const completionPercentage = todayAppointments == 0 ? 0 : Math.round((Number(doneAppointments) * 100) / Number(totalAppointments))
+const completionWidth = `${completionPercentage}%`
+
+console.log("Completion width: ", completionWidth);
+
 
 
 return ( <div className="min-h-full bg-gray-50/70 p-4 sm:p-6 lg:p-8"> <div className="mx-auto max-w-7xl space-y-6">
@@ -114,7 +87,7 @@ return ( <div className="min-h-full bg-gray-50/70 p-4 sm:p-6 lg:p-8"> <div class
         </p>
 
         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-          Good Morning, Receptionist
+          Hello, {userName}
         </h1>
 
         <p className="mt-1 text-sm text-gray-500">
@@ -124,12 +97,12 @@ return ( <div className="min-h-full bg-gray-50/70 p-4 sm:p-6 lg:p-8"> <div class
 
       <div className="flex w-fit items-center gap-2 rounded-xl border border-gray-100 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 shadow-sm">
         <CalendarDays className="h-4 w-4 text-emerald-600" />
-        <span>October 02, 2026</span>
+        <span>{new Date().toLocaleDateString("en-US", {dateStyle: "long"})}</span>
       </div>
     </div>
 
     {/* Daily Stats */}
-    <div className="grid grid-cols-2 gap-4 ">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 ">
       {stats.map((stat) => {
         const Icon = stat.icon;
 
@@ -161,6 +134,70 @@ return ( <div className="min-h-full bg-gray-50/70 p-4 sm:p-6 lg:p-8"> <div class
         );
       })}
     </div>
+
+    {/* Doctors Status */}
+        {
+          isReceptionist &&
+          <section className="rounded-2xl border border-gray-100 bg-white shadow-sm">
+          <div className="border-b border-gray-100 p-5">
+            <div className="flex items-center gap-2">
+              <Stethoscope className="h-5 w-5 text-emerald-600" />
+
+              <h2 className="text-lg font-bold text-gray-900">
+                Doctors Status
+              </h2>
+            </div>
+
+            <p className="mt-1 text-sm text-gray-500">
+              Current duty status.
+            </p>
+          </div>
+
+          {
+            doctors.length > 0 ? 
+            doctors.map(doc =>
+            {
+              const onDuty = doc.doctorField.onDuty
+              return(
+                <div  
+                key={doc._id}
+                className="divide-y divide-gray-100">
+            <div className="flex items-center justify-between p-4">
+              <div className="flex items-center gap-3">
+                <img 
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-50 text-sm font-bold text-emerald-700"
+                src={doc.avatar} 
+                alt="Err" />
+                
+                <div>
+                  <p className={`text-sm font-semibold ${onDuty ? "text-gray-800" : "text-gray-400"}`}>
+                    Dr. {doc.fullName}
+                  </p>
+
+                  
+                  <div className="flex justify-start ">
+                    <p className="text-xs text-gray-400">
+                    {onDuty ? "Available" : "Not Available"}
+                  </p>
+                  </div>
+                </div>
+              </div>
+
+              <span className={`flex items-center gap-1.5 text-xs font-semibold ${onDuty ? "text-emerald-500" : "text-gray-500"}`}>
+                <span className={`h-2 w-2 rounded-full ${onDuty ? "bg-emerald-500" : "bg-gray-500"}`} />
+                {onDuty ? "On Duty" : "Off Duty"}
+              </span>
+            </div>
+
+          </div>
+              )
+            }
+            ) :
+            <p>There is no doctor on duty</p> 
+          }
+
+        </section>
+        }
 
     {/* Quick Actions */}
     <section>
@@ -217,7 +254,7 @@ return ( <div className="min-h-full bg-gray-50/70 p-4 sm:p-6 lg:p-8"> <div class
             </h2>
 
             <p className="mt-1 text-sm text-gray-500">
-              Upcoming appointments for today.
+              All appointments for today.
             </p>
           </div>
 
@@ -231,9 +268,9 @@ return ( <div className="min-h-full bg-gray-50/70 p-4 sm:p-6 lg:p-8"> <div class
         </div>
 
         <div className="divide-y divide-gray-100">
-          {todayAppointments.map((appointment) => (
+          {todayAppointments.length > 0 ? todayAppointments.map((appointment) => (
             <div
-              key={appointment.id}
+              key={appointment?._id}
               className="flex flex-col gap-4 p-5 transition hover:bg-gray-50/60 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex items-center gap-3">
@@ -242,29 +279,45 @@ return ( <div className="min-h-full bg-gray-50/70 p-4 sm:p-6 lg:p-8"> <div class
                 </div>
 
                 <div>
+                  <div className="flex justify-start">
+
                   <h3 className="font-semibold text-gray-900">
-                    {appointment.patient}
+                    {appointment?.generalPatientInfo?.patientName}
                   </h3>
+                  </div>
 
-                  <p className="mt-0.5 text-sm text-gray-500">
-                    {appointment.treatment}
+                  {
+                    isReceptionist &&
+                    <div className="flex justify-start">
+                    <p className="mt-0.5 text-sm text-gray-500">
+                    Dr. {appointment?.doctor?.fullName}
                   </p>
+                  </div>
+                  }
 
+                  <div className="flex justify-start">
+                    <p className="mt-0.5 text-sm text-gray-500">
+                    {appointment.forSession?.slice(0, 1)?.toUpperCase() + appointment?.forSession?.slice(1, appointment?.forSession?.length)}
+                  </p>
+                  </div>
+
+                  <div className="flex justify-start">
                   <p className="mt-1 text-xs text-gray-400">
-                    {appointment.doctor}
+                    Payment : {appointment?.paymentSection?.paid || 0}
                   </p>
+                </div>
                 </div>
               </div>
 
               <div className="flex items-center justify-between gap-4 sm:justify-end">
                 <div className="flex items-center gap-1.5 text-sm font-medium text-gray-600">
                   <Clock3 className="h-4 w-4 text-emerald-600" />
-                  {appointment.time}
+                  {appointment.times?.time}
                 </div>
 
                 <span
                   className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                    appointment.status === "Confirmed"
+                    appointment.status === "done"
                       ? "bg-emerald-50 text-emerald-700"
                       : "bg-amber-50 text-amber-700"
                   }`}
@@ -275,106 +328,24 @@ return ( <div className="min-h-full bg-gray-50/70 p-4 sm:p-6 lg:p-8"> <div class
                 <button
                   type="button"
                   className="hidden rounded-lg p-2 text-gray-400 transition hover:bg-emerald-50 hover:text-emerald-600 sm:block"
-                  aria-label={`View ${appointment.patient} appointment`}
+                  aria-label={`View ${appointment?.generalPatientInfo?.patientName} appointment`}
                 >
                   <ArrowRight className="h-4 w-4" />
                 </button>
               </div>
             </div>
-          ))}
+          )) :
+          <p className="font-semibold p-2">
+            There is no appointment for today
+          </p>
+          }
         </div>
       </section>
 
       {/* Right Side */}
       <div className="space-y-6">
 
-        {/* Doctors Status */}
-        <section className="rounded-2xl border border-gray-100 bg-white shadow-sm">
-          <div className="border-b border-gray-100 p-5">
-            <div className="flex items-center gap-2">
-              <Stethoscope className="h-5 w-5 text-emerald-600" />
-
-              <h2 className="text-lg font-bold text-gray-900">
-                Doctors Status
-              </h2>
-            </div>
-
-            <p className="mt-1 text-sm text-gray-500">
-              Current duty status.
-            </p>
-          </div>
-
-          <div className="divide-y divide-gray-100">
-            <div className="flex items-center justify-between p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-50 text-sm font-bold text-emerald-700">
-                  AK
-                </div>
-
-                <div>
-                  <p className="text-sm font-semibold text-gray-800">
-                    Dr. Ahmed Khan
-                  </p>
-
-                  <p className="text-xs text-gray-400">
-                    Physiotherapy
-                  </p>
-                </div>
-              </div>
-
-              <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                On Duty
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-50 text-sm font-bold text-emerald-700">
-                  MA
-                </div>
-
-                <div>
-                  <p className="text-sm font-semibold text-gray-800">
-                    Dr. Muhammad Ali
-                  </p>
-
-                  <p className="text-xs text-gray-400">
-                    Cupping Therapy
-                  </p>
-                </div>
-              </div>
-
-              <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                On Duty
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between p-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-sm font-bold text-gray-500">
-                  US
-                </div>
-
-                <div>
-                  <p className="text-sm font-semibold text-gray-800">
-                    Dr. Usman
-                  </p>
-
-                  <p className="text-xs text-gray-400">
-                    Dry Needling
-                  </p>
-                </div>
-              </div>
-
-              <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                On Duty
-              </span>
-            </div>
-          </div>
-        </section>
+        
 
         {/* Pending Payments */}
         <section className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
@@ -393,9 +364,6 @@ return ( <div className="min-h-full bg-gray-50/70 p-4 sm:p-6 lg:p-8"> <div class
               </p>
             </div>
 
-            <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-700">
-              5
-            </span>
           </div>
 
           <div className="mt-5 rounded-xl bg-amber-50/70 p-4">
@@ -404,7 +372,7 @@ return ( <div className="min-h-full bg-gray-50/70 p-4 sm:p-6 lg:p-8"> <div class
             </p>
 
             <p className="mt-1 text-2xl font-bold text-gray-900">
-              Rs. 8,500
+              Rs. {Number(pendingPayment).toLocaleString()}
             </p>
 
             <button
@@ -434,7 +402,7 @@ return ( <div className="min-h-full bg-gray-50/70 p-4 sm:p-6 lg:p-8"> <div class
             </h2>
 
             <p className="mt-1 text-sm text-gray-500">
-              8 of 18 appointments completed today.
+              {doneAppointments} of {totalAppointments} appointments completed today.
             </p>
           </div>
         </div>
@@ -450,8 +418,10 @@ return ( <div className="min-h-full bg-gray-50/70 p-4 sm:p-6 lg:p-8"> <div class
             </span>
           </div>
 
-          <div className="h-2 overflow-hidden rounded-full bg-gray-200">
-            <div className={`h-full rounded-full bg-emerald-500 ${completionWidth} `} />
+          <div 
+          style={{width: completionWidth}}
+          className="h-2 overflow-hidden rounded-full bg-gray-200">
+            <div className={`h-full rounded-full bg-emerald-500 `} />
           </div>
         </div>
       </div>

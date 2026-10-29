@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import TextInput from '../utils/TextInput'
-import PasswordInput from '../utils/PasswordInput'
+import {TextInput} from '../utils/TextInput'
+import {PasswordInput} from '../utils/PasswordInput'
 import { ImageInput } from '../utils/ImageInput'
-import CustomButton from '../utils/CustomButton'
+import {CustomButton} from '../utils/CustomButton'
 import { useForm } from 'react-hook-form'
 import { useAxios } from '../useAxios'
-import Loading from '../utils/Loading'
+import {Loading} from '../utils/Loading'
 import { ErrorMessage } from '../utils/ErrorMessage'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUserInfo } from '../Redux/userSlice'
 import { SelectInput } from '../utils/CustomSelectInput'
-import TimeSelection from '../utils/Times'
+import {TimeSelection} from '../utils/Times'
 import {ScreenBlankError} from '../utils/ScreenBlankError'
 
 const sessionTypes = 
@@ -33,6 +33,18 @@ const sessionTypes =
     },
 ]
 
+const statusOptions = 
+[
+    {
+        label: "Pending",
+        value: "pending"
+    },
+    {
+        label: "Completed",
+        value: "done"
+    }
+]
+
 function AppointmentForm(
     {
         doctorsList = [],
@@ -44,7 +56,7 @@ function AppointmentForm(
     const [selectedDoctor, setSelectedDoctor] = useState()
     const [msg, setMsg] = useState("")
     const [doctor, setDoctors] = useState([])
-    const [date, setDate] = useState(new Date().toLocaleDateString())
+    const [date, setDate] = useState(new Date())
     const [doctorId, setDoctorId] = useState(null)
     const [times, setTimes] = useState({})
     const dispatch = useDispatch()
@@ -85,7 +97,7 @@ function AppointmentForm(
             return;
         }
 
-        data = {...data, doctor: doctorId, date, profileId: RTKUser?.userData?.userProfileId}
+        data = {...data, doctor: doctorId, date: date.toLocaleDateString(), profileId: RTKUser?.userData?.userProfileId}
 
         console.log("data: ", data);
 
@@ -145,7 +157,7 @@ function AppointmentForm(
         console.log("date: ", presentDate);
         
 
-        setDate(presentDate.toLocaleDateString())
+        setDate(presentDate)
 
     }, [selectedDay])
 
@@ -174,7 +186,7 @@ function AppointmentForm(
             }
 
             <TextInput
-                defaultValue={RTKUser?.userData?.fullName}
+                defaultValue={RTKUser?.userData?.role == "patient" ? RTKUser?.userData?.fullName : ""}
                 errors={errors}
                 name={"patientName"}
                 register={register}
@@ -185,7 +197,7 @@ function AppointmentForm(
             <br />
 
             <TextInput
-                defaultValue={RTKUser?.userData?.email}
+                defaultValue={RTKUser?.userData?.role == "patient" ? RTKUser?.userData?.email : ""}
                 errors={errors}
                 name={"email"}
                 isRequired={false}
@@ -196,7 +208,7 @@ function AppointmentForm(
             <br />
 
             <TextInput
-                defaultValue={RTKUser?.userData?.cellNo}
+                defaultValue={RTKUser?.userData?.role == "patient" ? RTKUser?.userData?.cellNo : ""}
                 errors={errors}
                 name={"cellNo"}
                 register={register}
@@ -215,19 +227,61 @@ function AppointmentForm(
             />
             <br />
 
+                {
+                    RTKUser?.userData?.role !== "patient" &&
+                    (
+                        <div>
+                            <TextInput
+                                type='Number'
+                                defaultValue={1000}
+                                isRequired={false}
+                                errors={errors}
+                                name={"payable"}
+                                register={register}
+                                lable='Payable Amount'
+                                placeholder="Enter payable amount"
+                            />
+                            <br />
 
-            <SelectInput
-                defaultValue={sessionTypes[0]?.value}
-                options={sessionTypes}
-                error={errors}
-                label={"Select Session Type"}
-                name={"forSession"}
-                register={register}
-                placeholder='Select a session type for treatement'
-            />
+                            <TextInput
+                                type='Number'
+                                isRequired={false}
+                                errors={errors}
+                                name={"paid"}
+                                register={register}
+                                lable='Paid Amount'
+                                placeholder="Enter paid amount"
+                            />
+                            <br />
 
-            <br />
-            <div className=' grid grid-cols-1 sm:grid-cols-2 sm:gap-5 gap-5'>
+                            
+                            <SelectInput
+                            defaultValue={'pending'}
+                            options={statusOptions}
+                            error={errors}
+                            label={"Appointment Status"}
+                            name={"status"}
+                            register={register}
+                            placeholder='Select an appointment status'
+                            />
+                            <br />
+                        </div>
+                    )
+                }
+
+
+                <SelectInput
+                    defaultValue={sessionTypes[0]?.value}
+                    options={sessionTypes}
+                    error={errors}
+                    label={"Select Session Type"}
+                    name={"forSession"}
+                    register={register}
+                    placeholder='Select a session type for treatement'
+                />
+
+                <br />
+                <div className=' grid grid-cols-1 sm:grid-cols-2 sm:gap-5 gap-5'>
                 <SelectInput
                     onChange={(doc) => setSelectedDoctor(doc)}
                     defaultValue={doctor?.[0]?.value}
@@ -281,6 +335,7 @@ function AppointmentForm(
 
 
             <TimeSelection
+                date={date.toLocaleDateString("en-US", {dateStyle: "medium"})}
                 errors={errors}
                 name='time'
                 register={register}

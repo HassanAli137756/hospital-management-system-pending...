@@ -20,7 +20,6 @@ const useAxios = () => {
 
 
         console.log("res: ", res);
-        console.log("res: ", res?.data?.statusCode, res?.data?.success);
         
         if (
           res?.data?.statusCode == 200 || 201 && res?.data?.success 

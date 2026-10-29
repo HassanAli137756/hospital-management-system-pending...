@@ -6,6 +6,7 @@ import {errorMiddleware} from './middlewares/error.middleware.js'
 import { appointmentRouter } from './routes/appointment.routes.js'
 import { doctorRouter } from './routes/doctor.routes.js'
 import { adminRouter } from './routes/admin.routes.js'
+import { receptionistRouter } from './routes/receptionist.routes.js'
 
 const app = express()
 
@@ -41,6 +42,8 @@ app.use("/physiotherapy/v1/appointments", appointmentRouter)
 app.use("/physiotherapy/v1/doctors", doctorRouter)
 
 app.use("/physiotherapy/v1/admin", adminRouter)
+
+app.use("/physiotherapy/v1/receptionist", receptionistRouter)
 
 app.use(errorMiddleware)
 

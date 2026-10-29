@@ -34,10 +34,6 @@ const appointmentSearcher = asyncHandler( async (req, res) =>
         cellNo,
         doctor,
         forSession,
-        payment=0,
-        isPaymentBased=0,
-        diagnoses,
-        cups=0,
         status,
         starting="",
         ending=""

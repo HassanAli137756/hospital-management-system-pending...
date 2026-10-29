@@ -12,7 +12,12 @@ import {
   CircleDollarSign,
 } from "lucide-react";
 
-function TodaysAppointment({ appointments = [] }) {
+function PendingAppointmentCards(
+{ 
+  appointments = [],
+  label=`Today's Appointment`,
+  message="Your appointment for today"
+}) {
   return (
     <section className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
 
@@ -30,11 +35,11 @@ function TodaysAppointment({ appointments = [] }) {
 
           <div>
             <h2 className="font-semibold text-gray-900">
-              Today&apos;s Appointment
+              {label}
             </h2>
 
             <p className="text-xs text-gray-400 mt-0.5">
-              Your appointment for today
+              {message}
             </p>
           </div>
 
@@ -145,7 +150,7 @@ function TodaysAppointment({ appointments = [] }) {
                       </p>
 
                       <p className="text-sm font-semibold text-gray-800">
-                        {new Date(appointment.times.date).toLocaleDateString("en-US", {dateStyle: "medium"})}
+                        {new Date(appointment.times.date?.replace("Z", "")).toLocaleDateString("en-US", {dateStyle: "medium"})}
                       </p>
                     </div>
                   </div>
@@ -171,7 +176,7 @@ function TodaysAppointment({ appointments = [] }) {
                   </p>
 
                   <p className="text-sm font-medium text-gray-800 mt-1">
-                    {appointment.forSession}
+                    {appointment.forSession?.slice(0, 1)?.toUpperCase() + appointment?.forSession?.slice(1, appointment?.forSession?.length)}
                   </p>
                 </div>
 
@@ -212,4 +217,4 @@ function TodaysAppointment({ appointments = [] }) {
   )
 }
 
-export default TodaysAppointment
+export {PendingAppointmentCards}

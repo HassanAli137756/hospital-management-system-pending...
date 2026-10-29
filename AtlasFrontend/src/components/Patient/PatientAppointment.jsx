@@ -11,40 +11,66 @@ import {
   UserRound,
   ArrowRight,
 } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useAxios } from "../../useAxios";
+import { PatientHistoryCard } from "./utils/PatientHistoryCard";
+import {PendingAppointmentCards} from "./utils/TodaysAppointment";
+import {CustomButton} from "../../utils/CustomButton";
+import { ErrorMessage } from "../../utils/ErrorMessage";
+import {Loading} from "../../utils/Loading";
+import { DoneAppointmentCards } from "./utils/DoneAppointmentCards";
+import { useNavigate } from "react-router-dom";
 
 const appointmentTabs = [
-  "Upcoming",
   "Pending",
   "Completed",
 ];
 
-const appointments = [
-  {
-    id: 1,
-    doctor: "Dr. Ahmed Khan",
-    service: "Physiotherapy",
-    date: "October 03, 2026",
-    time: "05:00 PM",
-    status: "Confirmed",
-  },
-  {
-    id: 2,
-    doctor: "Dr. Muhammad Ali",
-    service: "Cupping Therapy",
-    date: "October 07, 2026",
-    time: "06:30 PM",
-    status: "Confirmed",
-  },
-];
 
-export default function PatientAppointments() {
+function PatientAppointments() {
+
+  const [selectedTab, setSelectedTab] = useState("Pending")
+  const navigate = useNavigate()
+
+  let { data, error, loading, request, setError } = useAxios()
+  const RTKUser = useSelector(state => state.userReducer.userInfo)
+
+  console.log("RTK User: ", RTKUser);
+  
+
+
+  const fetchHomeDetails = async () => {
+    if (!RTKUser?.userData?.userProfileId) {
+      setError("Failed to get your profile, please login to perform this action")
+      return;
+    }
+
+
+    await request("/appointments/get-patient-appointments", "post", { userProfileId: RTKUser?.userData?.userProfileId })
+
+
+
+  }
+
+  useEffect(() => {
+    if (!RTKUser?.userData?.userProfileId) 
+    {
+      setError("There is no user provided");
+    }
+    fetchHomeDetails()
+  }, [RTKUser])
+
+  
+
   return (
     <div className="space-y-6">
 
-      {/* =====================================================
-          PAGE HEADER
-      ====================================================== */}
+      {
+        loading &&
+        (<Loading />)
+      }
+
       <section className="
         flex flex-col
         sm:flex-row
@@ -70,6 +96,7 @@ export default function PatientAppointments() {
 
         {/* Booking Button */}
         <button
+          onClick={() => navigate("/book-appointment")}
           type="button"
           className="
             inline-flex items-center justify-center gap-2
@@ -95,9 +122,6 @@ export default function PatientAppointments() {
       </section>
 
 
-      {/* =====================================================
-          APPOINTMENT TABS
-      ====================================================== */}
       <section className="
         bg-white
         border border-gray-100
@@ -113,8 +137,9 @@ export default function PatientAppointments() {
           scrollbar-none
         ">
 
-          {appointmentTabs.map((tab, index) => (
+          {appointmentTabs.map((tab) => (
             <button
+              onClick={() => setSelectedTab(tab)}
               key={tab}
               type="button"
               className={`
@@ -124,7 +149,7 @@ export default function PatientAppointments() {
                 text-sm font-medium
                 transition
                 ${
-                  index === 0
+                  selectedTab === tab
                     ? "bg-emerald-700 text-white shadow-sm"
                     : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
                 }
@@ -139,250 +164,36 @@ export default function PatientAppointments() {
       </section>
 
 
-      {/* =====================================================
-          UPCOMING APPOINTMENTS
-      ====================================================== */}
-      <section>
-
-        <div className="flex items-center justify-between mb-4">
-
+      {
+        error?.length > 0 &&
+        <div className='flex justify-center'>
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">
-              Upcoming Appointments
-            </h2>
-
-            <p className="text-sm text-gray-500 mt-1">
-              Your scheduled clinic visits.
-            </p>
+            <ErrorMessage message={error} />
+            <CustomButton name='Reload' onClick={() => fetchHomeDetails()} />
           </div>
-
-          <span className="
-            hidden sm:inline-flex
-            items-center
-            px-2.5 py-1
-            rounded-full
-            bg-emerald-50
-            text-emerald-700
-            text-xs font-semibold
-          ">
-            {appointments.length} Appointments
-          </span>
-
         </div>
+      }
 
-
-        {/* Appointment List */}
-        <div className="space-y-4">
-
-          {appointments.map((appointment) => (
-
-            <div
-              key={appointment.id}
-              className="
-                bg-white
-                rounded-2xl
-                border border-gray-100
-                shadow-sm
-                p-5
-                sm:p-6
-                hover:border-emerald-100
-                transition
-              "
-            >
-
-              <div className="
-                flex flex-col
-                lg:flex-row
-                lg:items-center
-                lg:justify-between
-                gap-5
-              ">
-
-                {/* Doctor */}
-                <div className="flex items-center gap-4">
-
-                  <div className="
-                    w-12 h-12
-                    shrink-0
-                    rounded-xl
-                    bg-emerald-50
-                    flex items-center justify-center
-                  ">
-                    <Stethoscope
-                      size={22}
-                      className="text-emerald-700"
-                      strokeWidth={1.8}
-                    />
-                  </div>
-
-                  <div className="min-w-0">
-
-                    <div className="flex flex-wrap items-center gap-2">
-
-                      <h3 className="
-                        font-semibold
-                        text-gray-900
-                      ">
-                        {appointment.doctor}
-                      </h3>
-
-                      <span className="
-                        inline-flex items-center gap-1
-                        px-2 py-0.5
-                        rounded-full
-                        bg-emerald-50
-                        text-emerald-700
-                        text-[11px]
-                        font-semibold
-                      ">
-                        <CheckCircle2 size={12} />
-                        {appointment.status}
-                      </span>
-
-                    </div>
-
-                    <p className="text-sm text-gray-500 mt-1">
-                      {appointment.service}
-                    </p>
-
-                  </div>
-
-                </div>
-
-
-                {/* Date / Time */}
-                <div className="
-                  flex flex-wrap
-                  items-center
-                  gap-3
-                ">
-
-                  <div className="
-                    flex items-center gap-2
-                    px-3.5 py-2.5
-                    rounded-xl
-                    bg-gray-50
-                    border border-gray-100
-                  ">
-                    <CalendarDays
-                      size={17}
-                      className="text-emerald-700"
-                    />
-
-                    <div>
-                      <p className="
-                        text-[10px]
-                        uppercase
-                        tracking-wide
-                        text-gray-400
-                      ">
-                        Date
-                      </p>
-
-                      <p className="text-sm font-semibold text-gray-800">
-                        {appointment.date}
-                      </p>
-                    </div>
-                  </div>
-
-
-                  <div className="
-                    flex items-center gap-2
-                    px-3.5 py-2.5
-                    rounded-xl
-                    bg-gray-50
-                    border border-gray-100
-                  ">
-                    <Clock3
-                      size={17}
-                      className="text-emerald-700"
-                    />
-
-                    <div>
-                      <p className="
-                        text-[10px]
-                        uppercase
-                        tracking-wide
-                        text-gray-400
-                      ">
-                        Time
-                      </p>
-
-                      <p className="text-sm font-semibold text-gray-800">
-                        {appointment.time}
-                      </p>
-                    </div>
-                  </div>
-
-                </div>
-
-
-                {/* Details */}
-                <button
-                  type="button"
-                  className="
-                    inline-flex items-center justify-center gap-2
-                    px-4 py-2.5
-                    rounded-xl
-                    border border-gray-200
-                    text-sm font-medium
-                    text-gray-700
-                    hover:border-emerald-200
-                    hover:bg-emerald-50
-                    hover:text-emerald-700
-                    transition
-                  "
-                >
-                  Details
-                  <ChevronRight size={16} />
-                </button>
-
-              </div>
-
-
-              {/* Appointment Bottom */}
-              <div className="
-                mt-5
-                pt-4
-                border-t border-gray-100
-                flex flex-col
-                sm:flex-row
-                sm:items-center
-                sm:justify-between
-                gap-3
-              ">
-
-                <div className="flex items-center gap-2 text-xs text-gray-400">
-                  <Clock4 size={14} />
-                  Please arrive a few minutes before your appointment.
-                </div>
-
-                <button
-                  type="button"
-                  className="
-                    text-sm
-                    font-medium
-                    text-red-500
-                    hover:text-red-600
-                  "
-                >
-                  Cancel Appointment
-                </button>
-
-              </div>
-
-            </div>
-
-          ))}
-
+      {
+        !loading && data && selectedTab == "Pending" &&
+        <div>
+          <PendingAppointmentCards
+          label="Pending Appointments"
+          message="The appointments comming in future"
+          appointments={data?.pendingAppointments}
+          />
         </div>
+      }
+      {
+        !loading && data && selectedTab == "Completed" &&
+        <div>
+          <DoneAppointmentCards
+          sessionCards={data?.doneAppointments}
+          />
+        </div>
+      }
 
-      </section>
 
-
-      {/* =====================================================
-          BOOK NEW APPOINTMENT
-      ====================================================== */}
       <section className="
         bg-white
         rounded-2xl
@@ -398,3 +209,5 @@ export default function PatientAppointments() {
     </div>
   );
 }
+
+export {PatientAppointments}

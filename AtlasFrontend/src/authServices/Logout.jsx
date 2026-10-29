@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import Loading from '../utils/Loading'
+import {Loading} from '../utils/Loading'
 import { ErrorMessage } from '../utils/ErrorMessage'
 import { useAxios } from '../useAxios'
 import { removeUserInfo } from '../Redux/userSlice'
@@ -15,7 +15,6 @@ function Logout() {
   const dispatch = useDispatch()
   let {data, error, loading, request, setData, setError, statusCode} = useAxios()
 
-  console.log("RTKUSER: ", RTKUser);
   
 
   const logout = async (data) => {
@@ -30,7 +29,7 @@ function Logout() {
   }
 
   useEffect(() => {
-    if (!loading && statusCode == 200 || 201) {
+    if (!loading && statusCode == 200 || statusCode == 201) {
       dispatch(removeUserInfo())
     }
   }, [data, error, loading])
@@ -51,7 +50,7 @@ function Logout() {
         type="button"
         className="
     group w-full flex items-center gap-3
-    px-3.5 py-2.5
+    px-2.5 py-1.5
     rounded-xl
 
     bg-red-50/60
@@ -117,7 +116,7 @@ function Logout() {
           </svg>
         </span>
 
-        <span className="font-medium">
+        <span className="">
           Sign out
         </span>
       </button>

@@ -3,6 +3,7 @@ import { Check, Clock3, LockKeyhole } from "lucide-react";
 import { ErrorMessage } from "./ErrorMessage";
 
 const TimeSelection = ({
+date="",
 errors,
 times = {},
 register,
@@ -48,7 +49,9 @@ const dayTimes = times?.[day] || [];
         className="w-full overflow-hidden rounded-2xl border border-gray-200 bg-white"
       >
         {/* ================= DAY HEADER ================= */}
-        <div className="flex items-center gap-2 border-b border-gray-100 bg-gray-50/70 px-4 py-3 sm:px-5">
+        <div className="flex justify-between border-b border-gray-100 bg-gray-50/70 px-4 py-3 sm:px-5">
+        <div className="flex items-center gap-2">
+
           <Clock3
             size={17}
             className="shrink-0 text-emerald-600"
@@ -57,6 +60,10 @@ const dayTimes = times?.[day] || [];
           <h3 className="text-sm font-semibold capitalize text-gray-800 sm:text-base">
             {day}
           </h3>
+        </div>
+        <p className="shrink-0 font-semibold text-emerald-600">
+          {date}
+        </p>
         </div>
 
         <div className="p-4 sm:p-5">
@@ -147,4 +154,4 @@ const dayTimes = times?.[day] || [];
 );
 };
 
-export default TimeSelection;
+export {TimeSelection};

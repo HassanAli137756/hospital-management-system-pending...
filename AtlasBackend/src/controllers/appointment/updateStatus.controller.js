@@ -54,7 +54,7 @@ const updatingStatus = asyncHandler( async (req, res) =>
     }
     
 
-    if((requester.role == "receptionist" && allowedDoctor.includes(appointment.doctor)) || requester.role == "admin")
+    if((requester.role == "receptionist" && allowedDoctor.includes(appointment.doctor)) || requester.role == "admin" || appointment.doctor.equals(requester?._id))
     {
         appointment.status = status
         appointment.statusUpdatedBy = requester._id

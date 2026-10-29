@@ -4,6 +4,7 @@ import { ErrorMessage } from './ErrorMessage'
 
 function TextInput(
     {
+        type="text",
         lable="",
         placeholder="",
         register,
@@ -27,7 +28,7 @@ function TextInput(
 
             <input
                 defaultValue={defaultValue}
-                type="text"
+                type={type}
                 name={name}
                 placeholder={placeholder}
                 {...(register ? register(name, isRequired ? {required: `Please fill this required field`} : {}) : {})}
@@ -50,4 +51,4 @@ function TextInput(
     )
 }
 
-export default TextInput
+export {TextInput}

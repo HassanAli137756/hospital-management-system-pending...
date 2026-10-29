@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
-import TextInput from '../utils/TextInput'
-import PasswordInput from '../utils/PasswordInput'
+import {TextInput} from '../utils/TextInput'
+import {PasswordInput} from '../utils/PasswordInput'
 import { ImageInput } from '../utils/ImageInput'
-import CustomButton from '../utils/CustomButton'
+import {CustomButton} from '../utils/CustomButton'
 import { useForm } from 'react-hook-form'
 import { useAxios } from '../useAxios'
-import Loading from '../utils/Loading'
+import {Loading} from '../utils/Loading'
 import { ErrorMessage } from '../utils/ErrorMessage'
 import { useDispatch } from 'react-redux'
 import { setUserInfo } from '../Redux/userSlice'
@@ -46,15 +46,15 @@ function LoginForm() {
 
   useEffect(() =>
   {
-    console.log("User data of api: ", data);
     
     if(!loading && data?.user?._id)
     {
+      
         dispatch(setUserInfo(
         {
             isLoadingUser: false,
             isAuthorized: true,
-            userData: data?.["user"],
+            userData: {...data?.user, userProfileId: data?.userProfileId},
         }))
     }
   }, [data, error, loading])

@@ -22,4 +22,4 @@ function CustomButton(
     )
 }
 
-export default CustomButton
+export {CustomButton}

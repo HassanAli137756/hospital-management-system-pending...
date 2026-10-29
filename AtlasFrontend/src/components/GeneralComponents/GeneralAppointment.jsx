@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   CalendarDays,
   Clock3,
@@ -7,25 +8,25 @@ import {
   Plus,
   Search,
   ArrowRight,
-  UserRoundCheck,
-  Stethoscope,
-  CheckCircle2,
 } from "lucide-react";
 import { AppointmentCard } from "../../utils/AppointmentCard";
 
 
 const quickActions = [
 {
+path: "/book-appointment",
 title: "Book Appointment",
 description: "Create a new patient appointment",
 icon: Plus,
 },
 {
+path: "",
 title: "Find Patient",
 description: "Search patient records quickly",
 icon: Search,
 },
 {
+path: "",
 title: "Record Payment",
 description: "Update a pending payment",
 icon: CircleDollarSign,
@@ -34,53 +35,17 @@ icon: CircleDollarSign,
 
 
 const GeneralAppointments = ({
-  totalAppointments = "14",
-  pendingAppointments = "3",
-  pendingPayment = "2000",
+  totalAppointments =0,
+  pendingAppointments =0,
+  pendingPayment =0,
 
-  appointments = [
-    {
-      id: 1,
-      patient: "Ali Raza",
-      doctor: "Dr. Ahmed Khan",
-      treatment: "Physiotherapy",
-      time: "04:00 PM",
-      status: "Confirmed",
-      payment: "Paid",
-      amount: "1500",
-    },
-    {
-      id: 2,
-      patient: "Sara Ahmed",
-      doctor: "Dr. Muhammad Ali",
-      treatment: "Cupping Therapy",
-      time: "05:00 PM",
-      status: "Pending",
-      payment: "Pending",
-      amount: "2000",
-    },
-    {
-      id: 3,
-      patient: "Hamza Tariq",
-      doctor: "Dr. Usman",
-      treatment: "Dry Needling",
-      time: "05:30 PM",
-      status: "Confirmed",
-      payment: "Paid",
-      amount: "1800",
-    },
-    {
-      id: 4,
-      patient: "Ayesha Noor",
-      doctor: "Dr. Ahmed Khan",
-      treatment: "Physiotherapy",
-      time: "06:30 PM",
-      status: "Confirmed",
-      payment: "Paid",
-      amount: "1500",
-    },
-  ],
+  appointments = [],
 }) => {
+
+  const navigate = useNavigate()
+
+
+
   const stats = [
     {
       title: "Total Appointments",
@@ -145,7 +110,7 @@ const GeneralAppointments = ({
                     <div className="flex justify-start">
 
                       <h2 className="mt-2 ml-2 text-2xl font-bold text-gray-900">
-                        {stat.value.padStart('2', "0")}
+                        {String(stat.value).padStart('2', "0")}
                       </h2>
                       </div>
 
@@ -183,6 +148,7 @@ const GeneralAppointments = ({
         
                   return (
                     <button
+                      onClick={() => action.path ? navigate(action.path) : null}
                       key={action.title}
                       type="button"
                       className="group flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-emerald-100 hover:shadow-md"
@@ -225,7 +191,7 @@ const GeneralAppointments = ({
 
             <div className="flex w-fit items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-600">
               <CalendarDays className="h-4 w-4 text-emerald-600" />
-              October 02, 2026
+              {new Date().toLocaleDateString("en-US", {dateStyle: "long"})}
             </div>
           </div>
 
@@ -234,7 +200,7 @@ const GeneralAppointments = ({
 
             {appointments.map((appointment) => (
               <AppointmentCard
-                key={appointment.id}
+                key={appointment._id}
                 appointment={appointment}
               />
             ))}

@@ -6,8 +6,12 @@ import { appointmentSearcher } from '../controllers/appointment/searcher.control
 import { updatingAppointment } from '../controllers/appointment/updateAppointment.controller.js'
 import { updatingPayment } from '../controllers/appointment/updatePayment.controller.js'
 import { updatingStatus } from '../controllers/appointment/updateStatus.controller.js'
-import { patientDashboardDetails } from '../controllers/appointment/pateintHome.controller.js'
-import { patientHistoryDetails } from '../controllers/appointment/patientHistory.controller.js'
+import { patientDashboardDetails } from '../controllers/patient/pateintHome.controller.js'
+import { patientHistoryDetails } from '../controllers/patient/patientHistory.controller.js'
+import { patientPaymentDetails } from '../controllers/patient/patientPayments.controller.js'
+import { patientAppointmentsDetails } from '../controllers/patient/patientAppointments.controller.js'
+import {verifyRole} from '../middlewares/verifyRole.middleware.js'
+
 
 
 const appointmentRouter = express.Router()
@@ -38,11 +42,19 @@ appointmentRouter.route("/update-appointment/:appointmentId").patch(authMiddlewa
 
 
 // OKAY
-appointmentRouter.route("/get-patient-home").post(authMiddleware, patientDashboardDetails)
+appointmentRouter.route("/get-patient-home").post(authMiddleware, verifyRole("patient"), patientDashboardDetails)
+
+
+// OKAY
+appointmentRouter.route("/get-patient-history").post(authMiddleware, verifyRole("patient"), patientHistoryDetails)
+
+
+// OKAY
+appointmentRouter.route("/get-patient-payments").post(authMiddleware, verifyRole("patient"), patientPaymentDetails)
 
 
 
-appointmentRouter.route("/get-patient-history").post(authMiddleware, patientHistoryDetails)
+appointmentRouter.route("/get-patient-appointments").post(authMiddleware, verifyRole("patient"), patientAppointmentsDetails)
 
 
 

@@ -13,18 +13,38 @@ import {
 } from "lucide-react";
 function SummerCards(
 {
-    doneSessions=0,
-    pendingSessions=0,
-    paidPayment=0,
-    pendingPayment=0,
+    doneSessions=
+    {
+      allowed:false,
+      value:0
+    },
+    pendingSessions=
+    {
+      allowed:false,
+      value:0
+    },
+    paidPayment=
+    {
+      allowed:false,
+      value:0
+    },
+    pendingPayment=
+    {
+      allowed:false,
+      value:0
+    },
+    classes="",
+    isAllowedDefaultClasses=true
 
 }
 ) {
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <section className={`${isAllowedDefaultClasses ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4": ""} ${classes}`}>
 
         {/* Total Sessions */}
-        <div className="
+        {
+          doneSessions.allowed &&
+          <div className="
           bg-white
           rounded-2xl
           border border-gray-100
@@ -40,7 +60,7 @@ function SummerCards(
               </p>
 
               <p className="mt-2 text-2xl font-bold text-gray-900">
-                {doneSessions}
+                {doneSessions.value}
               </p>
 
               <p className="mt-1 text-xs text-gray-400">
@@ -63,10 +83,13 @@ function SummerCards(
           </div>
 
         </div>
+        }
 
 
         {/* Pending Appointments */}
-        <div className="
+        {
+          pendingSessions.allowed &&
+          <div className="
           bg-white
           rounded-2xl
           border border-gray-100
@@ -82,7 +105,7 @@ function SummerCards(
               </p>
 
               <p className="mt-2 text-2xl font-bold text-gray-900">
-                {pendingSessions}
+                {pendingSessions.value}
               </p>
 
               <p className="mt-1 text-xs text-gray-400">
@@ -105,10 +128,13 @@ function SummerCards(
           </div>
 
         </div>
+        }
 
 
         {/* Paid Payments */}
-        <div className="
+        {
+          paidPayment.allowed &&
+          <div className="
           bg-white
           rounded-2xl
           border border-gray-100
@@ -124,7 +150,7 @@ function SummerCards(
               </p>
 
               <p className="mt-2 text-2xl font-bold text-gray-900">
-                Rs. {Number(paidPayment).toLocaleString()}
+                Rs. {Number(paidPayment.value).toLocaleString()}
               </p>
 
               <p className="mt-1 text-xs text-gray-400">
@@ -147,10 +173,13 @@ function SummerCards(
           </div>
 
         </div>
+        }
 
 
         {/* Pending Payments */}
-        <div className="
+        {
+          pendingPayment.allowed &&
+          <div className="
           bg-white
           rounded-2xl
           border border-gray-100
@@ -166,7 +195,7 @@ function SummerCards(
               </p>
 
               <p className="mt-2 text-2xl font-bold text-gray-900">
-                Rs. {Number(pendingPayment).toLocaleString()}
+                Rs. {Number(pendingPayment.value).toLocaleString()}
               </p>
 
               <p className="mt-1 text-xs text-gray-400">
@@ -189,10 +218,11 @@ function SummerCards(
           </div>
 
         </div>
+        }
 
       </section>
 
   )
 }
 
-export default SummerCards
+export {SummerCards}
