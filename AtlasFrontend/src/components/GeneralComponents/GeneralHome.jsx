@@ -11,6 +11,8 @@ ArrowRight,
 CheckCircle2,
 Stethoscope,
 } from "lucide-react";
+import { AppointmentCards } from "./AppointmetCards";
+import { useNavigate } from "react-router-dom";
 
 const GeneralHome = (
 {
@@ -54,11 +56,13 @@ icon: CreditCard,
 
 const quickActions = [
 {
+path: "/appointment-searcher",
 title: "Book Appointment",
 description: "Create a new patient appointment",
 icon: Plus,
 },
 {
+  path: "/appointment-searcher",
 title: "Find Patient",
 description: "Search patient records quickly",
 icon: Search,
@@ -72,6 +76,7 @@ icon: CircleDollarSign,
 
 const completionPercentage = todayAppointments == 0 ? 0 : Math.round((Number(doneAppointments) * 100) / Number(totalAppointments))
 const completionWidth = `${completionPercentage}%`
+const navigate = useNavigate()
 
 console.log("Completion width: ", completionWidth);
 
@@ -217,6 +222,7 @@ return ( <div className="min-h-full bg-gray-50/70 p-4 sm:p-6 lg:p-8"> <div class
 
           return (
             <button
+              onClick={() => navigate(action?.path)}
               key={action.title}
               type="button"
               className="group flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-emerald-100 hover:shadow-md"
@@ -246,101 +252,15 @@ return ( <div className="min-h-full bg-gray-50/70 p-4 sm:p-6 lg:p-8"> <div class
     <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
 
       {/* Today's Appointments */}
-      <section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm xl:col-span-2">
-        <div className="flex items-center justify-between border-b border-gray-100 p-5">
-          <div>
-            <h2 className="text-lg font-bold text-gray-900">
-              Today's Appointments
-            </h2>
+      
 
-            <p className="mt-1 text-sm text-gray-500">
-              All appointments for today.
-            </p>
-          </div>
-
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 transition hover:text-emerald-700"
-          >
-            View All
-            <ArrowRight className="h-4 w-4" />
-          </button>
-        </div>
-
-        <div className="divide-y divide-gray-100">
-          {todayAppointments.length > 0 ? todayAppointments.map((appointment) => (
-            <div
-              key={appointment?._id}
-              className="flex flex-col gap-4 p-5 transition hover:bg-gray-50/60 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                  <UserRoundCheck className="h-5 w-5" />
-                </div>
-
-                <div>
-                  <div className="flex justify-start">
-
-                  <h3 className="font-semibold text-gray-900">
-                    {appointment?.generalPatientInfo?.patientName}
-                  </h3>
-                  </div>
-
-                  {
-                    isReceptionist &&
-                    <div className="flex justify-start">
-                    <p className="mt-0.5 text-sm text-gray-500">
-                    Dr. {appointment?.doctor?.fullName}
-                  </p>
-                  </div>
-                  }
-
-                  <div className="flex justify-start">
-                    <p className="mt-0.5 text-sm text-gray-500">
-                    {appointment.forSession?.slice(0, 1)?.toUpperCase() + appointment?.forSession?.slice(1, appointment?.forSession?.length)}
-                  </p>
-                  </div>
-
-                  <div className="flex justify-start">
-                  <p className="mt-1 text-xs text-gray-400">
-                    Payment : {appointment?.paymentSection?.paid || 0}
-                  </p>
-                </div>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between gap-4 sm:justify-end">
-                <div className="flex items-center gap-1.5 text-sm font-medium text-gray-600">
-                  <Clock3 className="h-4 w-4 text-emerald-600" />
-                  {appointment.times?.time}
-                </div>
-
-                <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                    appointment.status === "done"
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "bg-amber-50 text-amber-700"
-                  }`}
-                >
-                  {appointment.status}
-                </span>
-
-                <button
-                  type="button"
-                  className="hidden rounded-lg p-2 text-gray-400 transition hover:bg-emerald-50 hover:text-emerald-600 sm:block"
-                  aria-label={`View ${appointment?.generalPatientInfo?.patientName} appointment`}
-                >
-                  <ArrowRight className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-          )) :
-          <p className="font-semibold p-2">
-            There is no appointment for today
-          </p>
-          }
-        </div>
-      </section>
+        
+        <AppointmentCards
+        header="Today's Appointments"
+        message="All appointments for today."
+        isReceptionist={isReceptionist}
+        appointments={todayAppointments}
+        />
 
       {/* Right Side */}
       <div className="space-y-6">

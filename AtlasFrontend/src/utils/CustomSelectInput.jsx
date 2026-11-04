@@ -7,14 +7,21 @@ const SelectInput = ({
   name,
   options = [],
   register,
-  error,
+  errors,
   onChange,
+  isRequired=true,
   placeholder = "Select an option",
   ...props
 }) => {
 
-  const fields = register ? register(name, {required: 'Please provide this required field'}) : {}
 
+  console.log("defaultValue: ", defaultValue);
+  
+
+
+  const fields = register ? register(name, isRequired ? {required: 'Please provide this required field'} : {}) : {}
+
+  
   
   
 
@@ -32,7 +39,7 @@ const SelectInput = ({
       )}
 
       <select
-        defaultValue={defaultValue || options?.[0]?.value}
+        defaultValue={defaultValue}
         {...fields}
         id={name}
         onChangeCapture={(e) => (
@@ -67,6 +74,15 @@ const SelectInput = ({
           </option>
         ))}
       </select>
+      {
+        isRequired && errors?.[name] &&
+        (
+          <ErrorMessage
+            classes='justify-start'
+            message={errors?.[name]?.message}
+          />
+        )
+      }
 
     </div>
   );

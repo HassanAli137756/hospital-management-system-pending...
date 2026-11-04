@@ -4,25 +4,24 @@ import { ErrorMessage } from './ErrorMessage'
 
 function TextInput(
     {
-        type="text",
-        lable="",
-        placeholder="",
+        type = "text",
+        lable = "",
+        placeholder = "",
         register,
         errors,
         name,
-        isRequired=true,
-        defaultValue=""
+        isRequired = true,
+        defaultValue = ""
 
     }
-) 
-{
+) {
 
-    
+
     return (
         <div className='mt-2'>
             <div className="flex justify-start">
                 <label className="block text-sm font-medium text-gray-700 mb-0.5">
-                    {`${lable} ${!isRequired ? "(optional)" : "" }`}
+                    {`${lable} ${!isRequired ? "(optional)" : ""}`}
                 </label>
             </div>
 
@@ -31,7 +30,7 @@ function TextInput(
                 type={type}
                 name={name}
                 placeholder={placeholder}
-                {...(register ? register(name, isRequired ? {required: `Please fill this required field`} : {}) : {})}
+                {...(register ? register(name, isRequired ? { required: `Please fill this required field` } : {}) : {})}
                 className="w-full h-12 px-4 rounded-xl border border-gray-200 bg-gray-50
                   text-gray-900 placeholder:text-gray-400
                   outline-none transition
@@ -42,8 +41,8 @@ function TextInput(
                 isRequired && errors?.[name] &&
                 (
                     <ErrorMessage
-                    classes='justify-start'
-                    message={errors?.[name]?.message}
+                        classes='justify-start'
+                        message={errors?.[name]?.message}
                     />
                 )
             }
@@ -51,4 +50,4 @@ function TextInput(
     )
 }
 
-export {TextInput}
+export { TextInput }

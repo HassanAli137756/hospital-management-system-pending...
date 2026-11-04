@@ -69,7 +69,7 @@ function Layout() {
             }
 
             {
-                !window.navigator.onLine &&
+                !window.navigator.onLine && !loading &&
                 <InternetError />
             }
 

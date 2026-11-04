@@ -7,72 +7,37 @@ import {asyncHandler} from '../../utils/asyncHander.js'
 
 const appointmentSearcher = asyncHandler( async (req, res) =>
 {
-    // ****************** FLOW ***********************
-    /* 
-    1. authenitcation user should be logged-in
-    2. make an empty object, and then add fields comming from frontend
-    3. searcher will be based on: 
-        a.userProfileId(if user is patient add this field in object first by find Profile doc based on req.user._id)
-        b. email,
-        cellNo
-        doctor
-        date
-        forSession
-        payment(for not paid sessions)
-        diagnoses
-        cups
-        status
-    
-    */
-
     const user = req.user
-    const 
-    {
-        userProfileId,
-        name,
-        email,
-        cellNo,
-        doctor,
-        forSession,
-        status,
-        starting="",
-        ending=""
-    } = req.body
+    const name = req?.body?.name
+    const email = req?.body?.email
+    const cellNo= req?.body?.cellNo
+    const doctor = req?.body?.doctor
+    const forSession = req?.body?.forSession
+    const status = req?.body?.status
+    const starting = req?.body?.starting
+    const ending = req?.body?.ending
+    const paymentStatus = req?.body?.paymentStatus
+    const userProfileId = req?.body?.userProfileId
 
-    const presentDate = new Date()
-    const presentDay = presentDate.toLocaleDateString("en-US", {weekday: "long"}).toLowerCase()
-    let startingDate = new Date(presentDate)
-    let endingDate = new Date(startingDate)
-    endingDate.setDate(startingDate.getDate() + 1)
-    startingDate.setHours(0, 0, 0, 0)
-    endingDate.setHours(0, 0, 0, 0)
-
-    if(!user?._id)
-    {
+    
+    if (!user?._id) {
         throw new APIError(401, "Please login to see your history")
     }
-    
+
+    if (!starting || !ending) {
+        throw new APIError(400, "Please provide starting and ending dates")
+    }
+
+
+    let startingInput = new Date(starting).toLocaleDateString("en-CA");
+    let endingInput = new Date(ending).toLocaleDateString("en-CA");
+    let GeneralStartingDate = new Date(startingInput + "T00:00:00.000Z");
+    let GeneralEndingDate = new Date(endingInput + "T23:59:59.999Z");
+
     const options = {}
 
-    if(user.role == "doctor")
-    {
-        options.doctor = user?._id
-    }
-    else if(user.role == "patient")
-    {
-        const userProfile = await Profile.findOne({patientAccount: user?._id})
 
-        if(!userProfile?._id)
-        {
-            throw new APIError(403, "Failed to find user profile from database")
-        }
-
-        options.userProfileId = userProfile._id
-
-    }
-
-
-    if(name?.trim || email?.trim  || cellNo?.trim  )
+    if( (name?.trim || email?.trim  || cellNo?.trim) && user?.role !== "patient"  )
     {
         console.log("YES FIELDS ARE PROVIDED");
         
@@ -94,7 +59,7 @@ const appointmentSearcher = asyncHandler( async (req, res) =>
 
     }
 
-    if(doctor?.length > 0 && user.role !== "doctor")
+    if(doctor?.length > 0)
     {
         options.doctor = doctor
     }
@@ -104,130 +69,46 @@ const appointmentSearcher = asyncHandler( async (req, res) =>
         options.forSession = forSession
     }
 
-    if(forSession?.userProfileId > 0)
+    if(userProfileId?.length > 0)
     {
         options.userProfileId = userProfileId
     }
 
-    if(isPaymentBased == 1)
+    if(paymentStatus?.length > 0)
     {
-        options.payment = payment
+        options.paymentStatus = paymentStatus
     }
-
-    if(diagnoses?.length > 0)
-    {
-        options.diagnoses = diagnoses
-    }
-
-    if(cups > 0)
-    {
-        options.cups = cups
-    }
-    
+   
     if(status?.length > 0)
     {
         options.status = status
     }
 
-    if(starting?.length > 0)
-    {
-        startingDate = new Date(starting)
-    }
-
-    if(ending?.length > 0)
-    {
-        endingDate = new Date(ending)
-    }
-
-    
-    if(user.role == "receptionist")
-    {
-        const receptionist = await User.findById(user._id)
-
-        if(!receptionist._id)
-        {
-            throw new APIError(403, "Failed to find receptionist data from database")
-        }
-
-        if(receptionist.receptionistField.controls.allPaymentAccessPeriod == "week")
-        {
-            if(presentDay == "tuesday")
-            {
-                starting(presentDate.getDate() - 1)
-            }
-            else if(presentDay == "wednesday")
-            {
-                starting(presentDate.getDate() - 2)
-            }
-            else if(presentDay == "thursday")
-            {
-                starting(presentDate.getDate() - 3)
-            }
-            else if(presentDay == "firday")
-            {
-                starting(presentDate.getDate() - 4)
-            }
-            else if(presentDay == "saturday")
-            {
-                starting(presentDate.getDate() - 5)
-            }
-            else if(presentDay == "sunday")
-            {
-                starting(presentDate.getDate() - 6)
-            }
-            
-        }
-        else if(receptionist.receptionistField.controls.allPaymentAccessPeriod == "month")
-        {
-            startingDate.setDate(1)
-            endingDate.getDate(30)
-        }
-        else if(receptionist.receptionistField.controls.allPaymentAccessPeriod == "year")
-        {
-            startingDate.setMonth(0)
-            endingDate.setMonth(11)
-        }
-        else if (receptionist.receptionistField.controls.allPaymentAccessPeriod == "all") {
-
-            if (starting?.length > 0) {
-                startingDate = new Date(starting)
-            }
-
-            if (ending?.length > 0) {
-                endingDate = new Date(ending)
-            }
-        }
-    }
 
     options["times.date"] =
     {
-        $gte: startingDate,
-        $lt: endingDate,
+        $gte: GeneralStartingDate,
+        $lt: GeneralEndingDate,
     }
-
-    
-
 
 
     const targettedAppointments = await Appointment
     .find(options)
     .populate("userProfileId")
-    .populate("doctor", "userName avatar")
+    .populate("doctor", "fullName avatar")
     .populate({
         path: "userProfileId",
         populate: {
             path: "patientAccount",
-            select: "userName avatar"
+            select: "fullName email cellNo avatar"
         }
     })
 
     return res
     .status(200)
     .json(
-        new APIResponse(200, "Successfully fetched targetted appointments", {appointments: targettedAppointments, providedOptions: options})
+        new APIResponse(200, "Successfully fetched targetted appointments",targettedAppointments)
     )
-
-
 
 })
 

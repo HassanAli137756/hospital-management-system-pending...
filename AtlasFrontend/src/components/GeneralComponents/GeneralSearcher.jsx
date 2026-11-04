@@ -1,33 +1,189 @@
-import React from "react";
-import { Search, RotateCcw, SlidersHorizontal } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Search, RotateCcw, SlidersHorizontal, CalendarDays, Clock3 } from "lucide-react";
 import { SelectInput } from "../../utils/CustomSelectInput";
 import { TextInput } from "../../utils/TextInput";
 
-const Searcher = (
+import { useSelector } from "react-redux";
+import { useAxios } from "../../useAxios";
+import { DoctorList } from "./DoctorList";
+import { useForm } from "react-hook-form";
+import { Loading } from "../../utils/Loading";
+import { CustomButton } from "../../utils/CustomButton";
+import { ErrorMessage } from "../../utils/ErrorMessage";
+import { AppointmentCards } from "./AppointmetCards";
+
+let startingDefault = new Date()
+let endingDefault = new Date()
+startingDefault.setDate((startingDefault.getDate() - startingDefault.getDay()) + 1)
+endingDefault.setDate(startingDefault.getDate() + 5)
+const paymentStatusOptions =
+    [
+      {
+        value: " ",
+        label: "For both paid and up-paid"
+      },
+      {
+        value: "paid",
+        label: "Paid"
+      },
+      {
+        value: "pending",
+        label: "pending"
+      },
+  ]
+const treatmentStatusOptions =
+    [
+      {
+        value: " ",
+        label: "For both pending and done"
+      },
+      {
+        value: "done",
+        label: "Done"
+      },
+      {
+        value: "pending",
+        label: "Pending"
+      },
+  ]
+const sessionOptions =
+    [
+      {
+        value: " ",
+        label: "For all sessions"
+      },
+      {
+        value: "physio",
+        label: "Physiotherapy"
+      },
+      {
+        value: "cupping",
+        label: "Cupping"
+      },
+      {
+        value: "checkUp",
+        label: "Check Up"
+      },
+      {
+        value: "dryNeedling",
+        label: "Dry-Needling"
+      },
+  ]
+
+
+
+const GeneralSearcher = (
   {
-  register,
-  errors = {},
-  onSearch,
-  onReset,
 
-  showPatientName = true,
-  showEmail = true,
-  showSelectDoctor = true,
-  showCellNo = true,
-  showTreatmentStatus = true,
-  showPaymentStatus = true,
+    showPatientName = false,
+    showEmail = false,
+    showSelectDoctor = false,
+    showCellNo = false,
 
-  sessionOptions = [],
-  doctorOptions = [],
-  treatmentStatusOptions = [],
-  paymentStatusOptions = [],
+    className = "",
+  }) => {
 
-  className = "",
-}) => {
+
+  const [startingDate, setStartingDate] = useState(startingDefault.toLocaleDateString('en-CA'));
+  const [endingDate, setEndingDate] = useState(endingDefault.toLocaleDateString('en-CA'));
+  
+
+  const { register, handleSubmit, formState: { errors } } = useForm()
+  let { data, error, loading, request, setError } = useAxios()
+  const 
+  {
+    userData,
+    isAuthorized,
+    isLoaing
+  }
+  = useSelector(state => state.userReducer.userInfo)
+
+  const separateRequiredFields = (data = {}) => {
+    const reqFiedls = {}
+
+    Object.keys(data).map(key => {
+      if (data[key]?.trim() !== "") {
+        reqFiedls[key] = data[key]
+      }
+    }
+    )
+
+    return reqFiedls
+  }
+
+
+
+  const fetchAppointments = async (data) => {
+
+
+    let targettedFields = separateRequiredFields(data)
+
+
+    console.log("data: ", data, userData);
+
+    if (userData?.role == "patient") {
+      {
+        if (!userData?.userProfileId) return setError("Please login your profile id is not founded")
+
+
+        targettedFields =
+        {
+          ...targettedFields,
+          userProfileId: userData?.userProfileId
+        }
+      }
+    }
+
+
+    if(userData?.role == "doctor")
+    {
+      targettedFields = 
+      {
+        ...targettedFields,
+        doctor: userData?._id
+      }
+    }
+
+
+    console.log("targettedFields: ", targettedFields);
+
+
+
+    await request("/appointments/searcher", "post",
+      {
+        ...targettedFields,
+        starting: startingDate,
+        ending: endingDate
+      })
+
+
+
+  }
+
+  useEffect(() => {
+    if (!userData?.userProfileId) {
+      setError("There is no user provided");
+    }
+    fetchAppointments()
+  }, [])
+
+
+
+  console.log("data: ", data);
+
+
+
   return (
+    <div>
     <section
       className={`w-full min-w-0 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm ${className}`}
     >
+      {
+        loading &&
+        <Loading />
+      }
+      
+
       {/* Header */}
       <div className="flex flex-col gap-3 border-b border-gray-100 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div className="flex min-w-0 items-center gap-3">
@@ -50,29 +206,92 @@ const Searcher = (
         </span>
       </div>
 
+      <br />
       {/* Search Fields */}
+      <div className=" border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+        <div className="mb-4 flex items-center gap-2">
+          <div className="rounded-lg bg-emerald-50 p-2 text-emerald-600">
+            <CalendarDays size={18} />
+          </div>
+
+          <div>
+            <h2 className="font-semibold text-gray-900">
+              Payment Period
+            </h2>
+
+            <p className="text-xs text-gray-500">
+              Select dates to calculate payment records.
+            </p>
+          </div>
+        </div>
+        <div className="p-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Starting Date
+
+                <div className="relative">
+                  <CalendarDays
+                    size={17}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  />
+
+                  <input
+                    max={endingDate}
+                    type="date"
+                    value={startingDate}
+                    onChange={(e) => setStartingDate?.(e.target.value)}
+                    className="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-10 pr-4 text-sm text-gray-700 outline-none transition hover:border-emerald-400 hover:bg-white hover:ring-2 hover:ring-emerald-100"
+                  />
+                </div>
+              </label>
+            </div>
+
+            <div>
+              <label className="p-2 block text-sm font-medium text-gray-700">
+                Ending Date
+
+                <div className="relative">
+                  <Clock3
+                    size={17}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  />
+
+                  <input
+                    min={startingDate}
+                    type="date"
+                    value={endingDate}
+                    onChange={(e) => setEndingDate?.(e.target.value)}
+                    className="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-10 pr-4 text-sm text-gray-700 outline-none transition hover:border-emerald-400 hover:bg-white hover:ring-2 hover:ring-emerald-100"
+                  />
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          onSearch?.(e);
-        }}
-        className="space-y-5 p-4 sm:p-6"
+        onSubmit={handleSubmit(fetchAppointments)}
+        className="relative p-4 sm:p-6"
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
 
           {/* Patient Name */}
           {showPatientName && (
             <div className="min-w-0">
-              
+
               <TextInput
-              errors={errors}
-              name={"fullName"}
-              register={register}
-              lable="Patient Name"
-              placeholder="Enter patient name"
+                isRequired={false}
+                errors={errors}
+                name={"name"}
+                register={register}
+                lable="Patient Name"
+                placeholder="Enter patient name"
 
               />
-              
+
             </div>
           )}
 
@@ -80,144 +299,100 @@ const Searcher = (
           {showEmail && (
             <div className="min-w-0">
               <TextInput
-              type="email"
-              errors={errors}
-              name={"email"}
-              register={register}
-              lable="Email"
-              placeholder="Enter patient email"
+                isRequired={false}
+                type="email"
+                errors={errors}
+                name={"email"}
+                register={register}
+                lable="Email"
+                placeholder="Enter patient email"
 
               />
             </div>
           )}
 
-          {/* Starting Time / Date */}
-          <div className="min-w-0">
-            <label
-              htmlFor="startingTime"
-              className="mb-2 block text-sm font-medium text-gray-700"
-            >
-              Starting Date
-            </label>
 
-            <input
-              id="startingTime"
-              type="date"
-              {...register?.("startingTime", {
-                required: "Starting date is required",
-              })}
-              className="w-full min-w-0 rounded-xl border border-gray-200 bg-white px-3 py-3 text-sm text-gray-700 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
-            />
-
-            {errors.startingTime && (
-              <p className="mt-1 text-xs text-red-500">
-                {errors.startingTime.message}
-              </p>
-            )}
-          </div>
-
-          {/* Ending Time / Date */}
-          <div className="min-w-0">
-            <label
-              htmlFor="endingTime"
-              className="mb-2 block text-sm font-medium text-gray-700"
-            >
-              Ending Date
-            </label>
-
-            <input
-              id="endingTime"
-              type="date"
-              {...register?.("endingTime")}
-              className="w-full min-w-0 rounded-xl border border-gray-200 bg-white px-3 py-3 text-sm text-gray-700 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10"
-            />
-
-            {errors.endingTime && (
-              <p className="mt-1 text-xs text-red-500">
-                {errors.endingTime.message}
-              </p>
-            )}
-          </div>
 
           {/* Session Type */}
           <div className="min-w-0">
             <SelectInput
+              isRequired={false}
               label="Session Type"
               name="forSession"
               register={register}
-              error={errors.forSession}
+              error={errors}
               placeholder="Select session type"
               options={sessionOptions}
             />
           </div>
 
-          {/* Doctor */}
-          {showSelectDoctor && (
-            <div className="min-w-0">
-              <SelectInput
-                label="Doctor"
-                name="doctor"
-                register={register}
-                error={errors.doctor}
-                placeholder="Select doctor"
-                options={doctorOptions}
-              />
-            </div>
-          )}
-
           {/* Cell Number */}
           {showCellNo && (
             <div className="min-w-0">
               <TextInput
-              type="email"
-              errors={errors}
-              name={"cellNo"}
-              register={register}
-              lable="Cell Number"
-              placeholder="Enter patient phone number"
+                isRequired={false}
+                errors={errors}
+                name="cellNo"
+                register={register}
+                lable="Cell Number"
+                placeholder="Enter patient phone number"
               />
             </div>
           )}
 
-          {/* Treatment Status */}
-          {showTreatmentStatus && (
+          {/* Doctor */}
+          {showSelectDoctor && (
+            <div className="min-w-0">
+              <DoctorList
+                errors={errors}
+                register={register}
+
+              />
+            </div>
+          )}
+
+
+
             <div className="min-w-0">
               <SelectInput
+                isRequired={false}
                 label="Treatment Status"
-                name="treatmentStatus"
+                name="status"
                 register={register}
-                error={errors.treatmentStatus}
+                error={errors}
                 placeholder="Select treatment status"
                 options={treatmentStatusOptions}
               />
             </div>
-          )}
 
           {/* Payment Status */}
-          {showPaymentStatus && (
+          
             <div className="min-w-0">
               <SelectInput
+                isRequired={false}
                 label="Payment Status"
                 name="paymentStatus"
                 register={register}
-                error={errors.paymentStatus}
+                error={errors}
                 placeholder="Select payment status"
                 options={paymentStatusOptions}
               />
             </div>
-          )}
         </div>
-
+        {
+          error?.length > 0 &&
+          <div >
+            <div className="flex justify-center" >
+              <div>
+                <ErrorMessage
+                  message={error}
+                />
+              </div>
+            </div>
+          </div>
+        }
         {/* Actions */}
         <div className="flex flex-col-reverse gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:items-center sm:justify-end">
-          <button
-            type="button"
-            onClick={onReset}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-600 transition hover:border-gray-300 hover:bg-gray-50 sm:w-auto"
-          >
-            <RotateCcw size={16} />
-            Reset Filters
-          </button>
 
           <button
             type="submit"
@@ -229,7 +404,23 @@ const Searcher = (
         </div>
       </form>
     </section>
+    <br />
+
+    {
+      !loading && data &&
+      <AppointmentCards
+      isBookingButtonShow={userData?.role !== "patient" ? true : false}
+      isDateShow={true}
+      message="All appointments based on given fields."
+      header="Targetted Appointmenst"
+      isReceptionist={true}
+      appointments={data}
+      />
+    }
+
+
+    </div>
   );
 };
 
-export {Searcher};
+export { GeneralSearcher };

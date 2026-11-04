@@ -47,10 +47,14 @@ const statusOptions =
 
 function AppointmentForm(
     {
+        providedDoctor,
+        userProfile={},
         doctorsList = [],
         doctorTimes = [],
     }
 ) {
+
+    
     const RTKUser = useSelector(state => state.userReducer.userInfo)
     const { handleSubmit, formState: { errors }, register } = useForm()
     const [selectedDoctor, setSelectedDoctor] = useState()
@@ -70,16 +74,21 @@ function AppointmentForm(
     }
 
     const setTime = (doctor) => {
-        const targettedTimes = doctorTimes.filter(doc => doc?.fullName?.toLowerCase() == doctor?.toLowerCase())
+        const targettedTimes = doctorsList.filter(doc => doc?._id == providedDoctor || doctor)
+
+        console.log("targettedTimes", targettedTimes);
+        
 
         setDoctorId(targettedTimes?.[0]?._id)
         setTimes(targettedTimes?.[0]?.doctorField?.times)
 
     }
 
-    const bookTime = async (data) => {
+    const bookTime = async (data) => 
+    {
+        const profileId = RTKUser?.userData?.role == "patient" ? RTKUser?.userData?.userProfileId : userProfile?._id
 
-        if(!RTKUser?.userData?.userProfileId)
+        if(profileId)
         {
             setError("Please provide user profile id")
             return;
@@ -97,9 +106,14 @@ function AppointmentForm(
             return;
         }
 
-        data = {...data, doctor: doctorId, date: date.toLocaleDateString(), profileId: RTKUser?.userData?.userProfileId}
+        data = 
+        {
+            ...data, 
+            doctor: doctorId, 
+            date: date.toLocaleDateString(), 
+            profileId: profileId
+        }
 
-        console.log("data: ", data);
 
         await request("/appointments/add-appointment", "post", data)
 
@@ -119,9 +133,12 @@ function AppointmentForm(
 
     useEffect(() => {
         if (!(doctor.length > 0)) {
-            const readyDoctors = doctorsList.map(doc => ({ label: doc, value: doc?.toLowerCase() }))
+            const readyDoctors = doctorsList.map(doc => ({ label: doc?.fullName, value: doc?._id }))
             setDoctors(readyDoctors)
-            setSelectedDoctor(readyDoctors?.[0]?.value)
+
+            setSelectedDoctor(providedDoctor || readyDoctors?.[0]?.value)
+            console.log("Provided Doctor: ", providedDoctor);
+            
         }
         setTime(selectedDoctor)
 
@@ -149,12 +166,10 @@ function AppointmentForm(
 
         let difference = daysNumbers[selectedDay.toLocaleLowerCase()] - presentDate.getDay()
 
-        console.log("difference: ", difference);
         
 
         presentDate.setDate(presentDate.getDate() + difference)
 
-        console.log("date: ", presentDate);
         
 
         setDate(presentDate)
@@ -164,6 +179,8 @@ function AppointmentForm(
 
 
 
+    console.log("Selected Doctor in AppointmentForm: ", selectedDoctor);
+    
 
 
     
@@ -186,7 +203,7 @@ function AppointmentForm(
             }
 
             <TextInput
-                defaultValue={RTKUser?.userData?.role == "patient" ? RTKUser?.userData?.fullName : ""}
+                defaultValue={RTKUser?.userData?.role == "patient" ? RTKUser?.userData?.fullName : userProfile?.fullName}
                 errors={errors}
                 name={"patientName"}
                 register={register}
@@ -197,7 +214,7 @@ function AppointmentForm(
             <br />
 
             <TextInput
-                defaultValue={RTKUser?.userData?.role == "patient" ? RTKUser?.userData?.email : ""}
+                defaultValue={RTKUser?.userData?.role == "patient" ? RTKUser?.userData?.email : userProfile?.email}
                 errors={errors}
                 name={"email"}
                 isRequired={false}
@@ -208,7 +225,7 @@ function AppointmentForm(
             <br />
 
             <TextInput
-                defaultValue={RTKUser?.userData?.role == "patient" ? RTKUser?.userData?.cellNo : ""}
+                defaultValue={RTKUser?.userData?.role == "patient" ? RTKUser?.userData?.cellNo : userProfile?.cellNo}
                 errors={errors}
                 name={"cellNo"}
                 register={register}
@@ -271,7 +288,7 @@ function AppointmentForm(
 
 
                 <SelectInput
-                    defaultValue={sessionTypes[0]?.value}
+                    defaultValue={userProfile?.forSession ? userProfile?.forSession :  sessionTypes[0]?.value}
                     options={sessionTypes}
                     error={errors}
                     label={"Select Session Type"}
@@ -283,8 +300,8 @@ function AppointmentForm(
                 <br />
                 <div className=' grid grid-cols-1 sm:grid-cols-2 sm:gap-5 gap-5'>
                 <SelectInput
-                    onChange={(doc) => setSelectedDoctor(doc)}
-                    defaultValue={doctor?.[0]?.value}
+                    defaultValue={providedDoctor || doctor?.[0]?.value}
+                    onChange={(doc) => (setSelectedDoctor(doc))}
                     options={doctor}
                     error={errors}
                     label={"Select Doctor"}

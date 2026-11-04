@@ -19,7 +19,7 @@ const getAllDoctors = asyncHandler( async (req, res) =>
 
     const DBDoctors = 
     await User
-    .find({role: "doctor"})
+    .find({role: "doctor", "doctorField.onDuty": true})
     .select("userName fullName doctorField avatar")
 
     const doctorNames = []

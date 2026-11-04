@@ -1,14 +1,10 @@
 import React, { useState } from "react";
 import {
-  Syringe,
   Accessibility,
-  CircleDot,
   CalendarDays,
   CircleDollarSign,
   Clock3,
-  CreditCard,
   Stethoscope,
-  UserRound,
   WalletCards,
   ArrowUpRight,
   Banknote,

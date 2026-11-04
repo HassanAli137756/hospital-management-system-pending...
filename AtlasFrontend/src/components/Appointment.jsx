@@ -15,13 +15,17 @@ import { ErrorMessage } from "../utils/ErrorMessage";
 import { useAxios } from "../useAxios";
 import { useEffect } from "react";
 import {CustomButton} from "../utils/CustomButton";
+import { useLocation } from "react-router-dom";
 
 
 const BookAppointment = () => {
 
   let { data, error, loading, request, setError, setData, setLoading } = useAxios()
+  let {state} = useLocation()
 
-
+  console.log("state: ", state);
+  console.log("DBDoctors Details: ", data?.DBDoctors);
+  
 
   const fetchDoctors = async () => {
     
@@ -129,8 +133,9 @@ const BookAppointment = () => {
               !loading && data &&
               (
                 <AppointmentForm
-                doctorTimes={data?.DBDoctors}
-                doctorsList={data?.doctorNames} 
+                providedDoctor={state?.userProfile?.doctorId}
+                userProfile={state?.userProfile}
+                doctorsList={data?.DBDoctors} 
                 />
               )
             }

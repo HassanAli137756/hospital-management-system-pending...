@@ -18,7 +18,7 @@ const InternetError = ({
           </div>
 
           <span className="text-lg font-bold tracking-tight text-gray-900">
-            Clinic<span className="text-emerald-600">Care</span>
+            Atlas<span className="text-emerald-600"> Physiotherapy</span>
           </span>
         </div>
 

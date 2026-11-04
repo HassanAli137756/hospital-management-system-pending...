@@ -66,12 +66,14 @@ const Header = ({
             { label: "Home", to: "/receptionist-home" },
             { label: "Appointments", to: "/receptionist-appointment" },
             { label: "Payments", to: "/receptionist-payment" },
-            { label: "Searcher", to: "/receptionist-searcher" },
           ]
         )
         navigate("/receptionist-home")
 
       }
+
+      setNavLinks(prev => ([...prev, { label: "Searcher", to: "/appointment-searcher" }]))
+
     }
     else if(!userInfo?.userData?._id && !userInfo?.isAuthorized)
     {

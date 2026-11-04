@@ -5,8 +5,9 @@ import "./App.css"
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { store } from './Redux/store'
-import App from './App'
+import {App} from './App'
 import {Layout} from './Routing/Layout'
+import {Searcher} from './components/Searcher'
 
 
 
@@ -31,7 +32,6 @@ import {ReceptionistLayout} from './Routing/ReceptionistLayout'
 import {ReceptionistAppointments} from './components/Receptionist/ReceptionistAppointments'
 import {ReceptionistHome} from './components/Receptionist/ReceptionistHome'
 import {ReceptionistPayments} from './components/Receptionist/ReceptionistPayments'
-import {ReceptionistSearcher} from './components/Receptionist/ReceptionistSearcher'
 
 
 
@@ -55,6 +55,7 @@ const router = createBrowserRouter(
 
       <Route element={<AuthorizedLayout />} >
 
+        <Route path="/appointment-searcher" element={<Searcher />} />
         <Route path="/book-appointment" element={<BookAppointment />} />
         <Route path="/update-password" element={<UpdatePassword />} />
         <Route path="/update-profile" element={<UpdateProfile />} />
@@ -105,7 +106,6 @@ const router = createBrowserRouter(
         <Route path="/receptionist-appointment" element={<ReceptionistAppointments />} />
         <Route  path="/receptionist-home" element={<ReceptionistHome />} />
         <Route path="/receptionist-payment" element={<ReceptionistPayments />} />
-        <Route path="/receptionist-searcher" element={<ReceptionistSearcher />} />
 
       </Route>
 
