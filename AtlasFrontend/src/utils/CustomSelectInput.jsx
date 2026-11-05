@@ -15,7 +15,6 @@ const SelectInput = ({
 }) => {
 
 
-  console.log("defaultValue: ", defaultValue);
   
 
 

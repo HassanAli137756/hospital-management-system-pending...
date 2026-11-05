@@ -23,8 +23,6 @@ const BookAppointment = () => {
   let { data, error, loading, request, setError, setData, setLoading } = useAxios()
   let {state} = useLocation()
 
-  console.log("state: ", state);
-  console.log("DBDoctors Details: ", data?.DBDoctors);
   
 
   const fetchDoctors = async () => {
