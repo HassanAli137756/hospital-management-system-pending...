@@ -18,6 +18,9 @@ function PendingAppointmentCards(
   label=`Today's Appointment`,
   message="Your appointment for today"
 }) {
+
+console.log("Appointment Time: ", new Date(appointments?.[0]?.times?.date));
+
   return (
     <section className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
 

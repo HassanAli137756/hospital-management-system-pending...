@@ -158,8 +158,8 @@ const addAppointment = asyncHandler( async (req, res) =>
         userProfileId: profileId,
         paymentSection:
         {
-            payable,
-            paid
+            payable: payable || 1000,
+            paid: paid || 0
         }
     }
     )

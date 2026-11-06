@@ -38,7 +38,7 @@ appointmentRouter.route("/searcher").post(authMiddleware, appointmentSearcher)
 
 
 // OKAY
-appointmentRouter.route("/update-appointment/:appointmentId").patch(authMiddleware, updatingAppointment)
+appointmentRouter.route("/update-appointment").patch(authMiddleware, updatingAppointment)
 
 
 // OKAY

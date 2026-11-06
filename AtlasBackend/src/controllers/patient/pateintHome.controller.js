@@ -33,6 +33,11 @@ const patientDashboardDetails = asyncHandler(async (req, res) => {
                 }
             },
             {
+                $sort: {
+                    "times.date": -1
+                }
+            },
+            {
                 $lookup:
                 {
                     from: "users",

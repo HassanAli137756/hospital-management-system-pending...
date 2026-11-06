@@ -74,6 +74,7 @@ const daysOptions = [
 
 function AppointmentForm(
     {
+        forUpdation=false,
         providedDoctor,
         userProfile = {},
         doctorsList = [],
@@ -136,13 +137,13 @@ function AppointmentForm(
         {
             ...formData,
             doctor: doctorId,
-            date: date.toLocaleDateString(),
+            date: date,
             profileId: profileId
         }
 
         
 
-        await request("/appointments/add-appointment", "post", formData)
+        await request(forUpdation ? "/appointments/update-appointment" : "/appointments/add-appointment", "post", formData)
 
 
 
@@ -367,7 +368,7 @@ function AppointmentForm(
                 <div className='flex mt-5 justify-end'>
                     <div className='w-1/2'>
                         <CustomButton
-                            name='Book'
+                            name={forUpdation ? "Save Changes" : 'Book'}
                             type='submit'
 
                         />

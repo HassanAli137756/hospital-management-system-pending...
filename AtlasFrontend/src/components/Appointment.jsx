@@ -18,10 +18,14 @@ import {CustomButton} from "../utils/CustomButton";
 import { useLocation } from "react-router-dom";
 
 
-const BookAppointment = () => {
+const BookAppointment = (
+{
+  isForUpdation=false
+}
+) => {
 
   let { data, error, loading, request, setError, setData, setLoading } = useAxios()
-  let {state} = useLocation()
+  let {state} = {}
 
   
 
@@ -131,6 +135,7 @@ const BookAppointment = () => {
               !loading && data &&
               (
                 <AppointmentForm
+                forUpdation={isForUpdation}
                 providedDoctor={state?.userProfile?.doctorId}
                 userProfile={state?.userProfile}
                 doctorsList={data?.DBDoctors} 

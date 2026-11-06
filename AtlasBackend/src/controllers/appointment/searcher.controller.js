@@ -34,6 +34,11 @@ const appointmentSearcher = asyncHandler( async (req, res) =>
     let GeneralStartingDate = new Date(startingInput + "T00:00:00.000Z");
     let GeneralEndingDate = new Date(endingInput + "T23:59:59.999Z");
 
+    console.log("GeneralStartingDate: ",GeneralStartingDate);
+    console.log("GeneralEndingDate: ",GeneralEndingDate);
+    
+
+
     const options = {}
 
 
@@ -103,6 +108,7 @@ const appointmentSearcher = asyncHandler( async (req, res) =>
             select: "fullName email cellNo avatar"
         }
     })
+    .sort({"times.date": -1})
 
     return res
     .status(200)

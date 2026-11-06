@@ -78,7 +78,6 @@ const completionPercentage = todayAppointments == 0 ? 0 : Math.round((Number(don
 const completionWidth = `${completionPercentage}%`
 const navigate = useNavigate()
 
-console.log("Completion width: ", completionWidth);
 
 
 
