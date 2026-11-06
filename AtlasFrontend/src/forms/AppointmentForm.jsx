@@ -90,7 +90,6 @@ function AppointmentForm(
     const [date, setDate] = useState(new Date())
     const [doctorId, setDoctorId] = useState(null)
     const [times, setTimes] = useState({})
-    const dispatch = useDispatch()
     let { data, error, loading, request, setError, setData, setLoading } = useAxios()
     const [selectedDay, setSelectedDay] = useState(new Date().toLocaleDateString("en-US", { weekday: "long" }).toLowerCase())
 
@@ -138,12 +137,15 @@ function AppointmentForm(
             ...formData,
             doctor: doctorId,
             date: date,
-            profileId: profileId
+            profileId: forUpdation ? "" : profileId,
+            appointmentId: forUpdation ? userProfile?.appointmentId : ""
         }
 
+        console.log("formData: ", formData);
+        
         
 
-        await request(forUpdation ? "/appointments/update-appointment" : "/appointments/add-appointment", "post", formData)
+        await request(forUpdation ? "/appointments/update-appointment" : "/appointments/add-appointment", forUpdation ? "patch" :  "post", formData)
 
 
 
@@ -161,7 +163,7 @@ function AppointmentForm(
         }
         setTime(selectedDoctor)
 
-        if (new Date().toLocaleDateString("en-US", { weekday: "long" }).toLowerCase() == "sunday") {
+        if (new Date().toLocaleDateString("en-US", { weekday: "long" }).toLowerCase() == "sunday" && !userProfile?.day) {
             setSelectedDay("monday")
         }
 
@@ -230,7 +232,7 @@ function AppointmentForm(
                 }
 
                 <TextInput
-                    defaultValue={RTKUser?.userData?.role == "patient" ? RTKUser?.userData?.fullName : userProfile?.fullName}
+                    defaultValue={userProfile?.fullName || RTKUser?.userData?.fullName}
                     errors={errors}
                     name={"patientName"}
                     register={register}
@@ -241,7 +243,7 @@ function AppointmentForm(
                 <br />
 
                 <TextInput
-                    defaultValue={RTKUser?.userData?.role == "patient" ? RTKUser?.userData?.email : userProfile?.email}
+                    defaultValue={userProfile?.email || RTKUser?.userData?.email }
                     errors={errors}
                     name={"email"}
                     isRequired={false}
@@ -252,7 +254,7 @@ function AppointmentForm(
                 <br />
 
                 <TextInput
-                    defaultValue={RTKUser?.userData?.role == "patient" ? RTKUser?.userData?.cellNo : userProfile?.cellNo}
+                    defaultValue={userProfile?.cellNo || RTKUser?.userData?.cellNo}
                     errors={errors}
                     name={"cellNo"}
                     register={register}
@@ -262,6 +264,7 @@ function AppointmentForm(
                 <br />
 
                 <TextInput
+                    defaultValue={userProfile?.diagnoses}
                     isRequired={false}
                     errors={errors}
                     name={"diagnoses"}
@@ -277,7 +280,7 @@ function AppointmentForm(
                         <div>
                             <TextInput
                                 type='Number'
-                                defaultValue={1000}
+                                defaultValue={userProfile?.payable || 1000}
                                 isRequired={false}
                                 errors={errors}
                                 name={"payable"}
@@ -288,6 +291,7 @@ function AppointmentForm(
                             <br />
 
                             <TextInput
+                                defaultValue={userProfile?.paid}
                                 type='Number'
                                 isRequired={false}
                                 errors={errors}
@@ -300,7 +304,7 @@ function AppointmentForm(
 
 
                             <SelectInput
-                                defaultValue={'pending'}
+                                defaultValue={userProfile?.treatmentStatus || 'pending'}
                                 options={statusOptions}
                                 error={errors}
                                 label={"Appointment Status"}
@@ -315,7 +319,7 @@ function AppointmentForm(
 
 
                 <SelectInput
-                    defaultValue={userProfile?.forSession ? userProfile?.forSession : sessionTypes[0]?.value}
+                    defaultValue={userProfile?.forSession || sessionTypes[0]?.value}
                     options={sessionTypes}
                     error={errors}
                     label={"Select Session Type"}
@@ -340,7 +344,7 @@ function AppointmentForm(
                         />
                     }
                     <SelectInput
-                        defaultValue={selectedDay.toLowerCase()}
+                        defaultValue={userProfile?.day || selectedDay.toLowerCase()}
                         onChange={(day) => (setSelectedDay(day))}
                         options={daysOptions}
                         error={errors}
@@ -356,6 +360,7 @@ function AppointmentForm(
 
 
                 <TimeSelection
+                    defaultTime={forUpdation && userProfile?.time ? userProfile?.time : ""}
                     date={date.toLocaleDateString("en-US", { dateStyle: "medium" })}
                     errors={errors}
                     name='time'

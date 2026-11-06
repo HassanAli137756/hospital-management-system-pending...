@@ -45,6 +45,7 @@ import { UpdateProfile } from './authServices/UpdateProfile'
 import { UnauthorizedLayout } from './Routing/UnauthorizedLayout'
 import { Login } from './authServices/Login'
 import { Register } from './authServices/Register'
+import { UpdateAppointment } from './components/UpdateAppointment'
 
 const router = createBrowserRouter(
 
@@ -59,6 +60,7 @@ const router = createBrowserRouter(
         <Route path="/book-appointment" element={<BookAppointment />} />
         <Route path="/update-password" element={<UpdatePassword />} />
         <Route path="/update-profile" element={<UpdateProfile />} />
+        <Route path="/update-appointment" element={<UpdateAppointment />} />
         
       </Route>
 
@@ -132,7 +134,7 @@ createRoot(
   document.getElementById('root')
 ).render(
     <Provider store={store}>
-    {/* <RouterProvider router={router} /> */}
-    <App />
+    <RouterProvider router={router} />
+    {/* <App /> */}
     </Provider>
 )

@@ -51,9 +51,9 @@ userRouter.route("/user-logout").post(authMiddleware, logout)
 
 
 
-userRouter.route("/testing/get-patient-history").get(patientHistoryDetails)
+userRouter.route("/testing/get-patient-history").post(patientHistoryDetails)
 
-userRouter.route("/testing/make-times-available").get(makeTimesAvaialble)
+userRouter.route("/testing/make-times-available").post(makeTimesAvaialble)
 
 
 

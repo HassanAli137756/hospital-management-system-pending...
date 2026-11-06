@@ -11,15 +11,17 @@ import {
   CheckCircle2,
   CircleDollarSign,
 } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 
 function PendingAppointmentCards(
 { 
+  currentRole="",
   appointments = [],
   label=`Today's Appointment`,
   message="Your appointment for today"
 }) {
 
-console.log("Appointment Time: ", new Date(appointments?.[0]?.times?.date));
+  const navigate = useNavigate()
 
   return (
     <section className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
@@ -186,7 +188,28 @@ console.log("Appointment Time: ", new Date(appointments?.[0]?.times?.date));
                 <button
                   type="button"
                   onClick={() => {
-                    // Yahan appointment dekhne ka logic lagana.
+                    navigate("/update-appointment",
+                      {
+                        state:
+                        {
+                          appointmentId: appointment._id,
+                          fullName: appointment.generalPatientInfo?.patientName,
+                          email: appointment.generalPatientInfo?.email,
+                          cellNo: appointment.generalPatientInfo?.cellNo,
+                          diagnoses: appointment.diagnoses,
+                          doctor: appointment.doctor?._id,
+                          time: appointment.times.time,
+                          day: new Date(appointment.times?.date).toLocaleDateString("en-US", {weekday: "long"}).toLowerCase(),
+                          paymentStatus: appointment.paymentStatus,
+                          treatmentStatus: appointment.status,
+                          paid: appointment.paymentSection?.paid,
+                          payable: appointment.paymentSection?.payable,
+                          forSession: appointment.forSession,
+                          updationTime: appointment.times?.timeOfUpdation,
+                          role: currentRole
+                        }
+                      }
+                    )
                   }}
                   className="
                     inline-flex items-center justify-center gap-2
@@ -202,7 +225,7 @@ console.log("Appointment Time: ", new Date(appointments?.[0]?.times?.date));
                     transition
                   "
                 >
-                  View Appointment
+                  Edit/Update
                   <ArrowRight size={16} />
                 </button>
 

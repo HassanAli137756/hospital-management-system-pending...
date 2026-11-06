@@ -3,6 +3,8 @@ import { Check, Clock3, LockKeyhole } from "lucide-react";
 import { ErrorMessage } from "./ErrorMessage";
 
 const TimeSelection = ({
+isForUpdation=false,
+defaultTime="",
 date="",
 errors,
 times = {},
@@ -43,6 +45,14 @@ const dayTimes = times?.[day] || [];
       (item) => !item.availability || !item.status
     );
 
+  if(isForUpdation)
+  {
+    bookedTime = unavailableTimes?.filter(item => item.time == defaultTime)
+
+    availableTimes?.push(bookedTime)
+
+  }
+
     return (
       <section
         key={day}
@@ -82,6 +92,8 @@ const dayTimes = times?.[day] || [];
                     className="group relative cursor-pointer"
                   >
                     <input
+                      defaultValue={defaultTime}
+                      defaultChecked={item.time == defaultTime}
                       type="radio"
                       value={`${item.time}`}
                       {...register(name, {

@@ -123,6 +123,7 @@ function PatientHome() {
           
           
               <PendingAppointmentCards
+              currentRole={RTKUser?.userData?.role}
               appointments={data?.todaysAppointments || []}
               />
       <br />
