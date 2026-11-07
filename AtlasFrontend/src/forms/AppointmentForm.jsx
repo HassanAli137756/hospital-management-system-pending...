@@ -115,7 +115,7 @@ function AppointmentForm(
 
 
 
-        if (!profileId) {
+        if (!profileId && !forUpdation) {
             setError("Please provide user profile id")
             return;
         }
@@ -138,7 +138,16 @@ function AppointmentForm(
             doctor: doctorId,
             date: date,
             profileId: forUpdation ? "" : profileId,
-            appointmentId: forUpdation ? userProfile?.appointmentId : ""
+            
+        }
+
+        if(forUpdation)
+        {
+            formData["appointmentId"] = userProfile?.appointmentId
+            formData["currentTime"] = formData?.["time"]
+            formData["previousTime"] = userProfile?.time
+            formData["previousDay"] = userProfile?.day
+            formData["currentDay"] = data?.day
         }
 
         console.log("formData: ", formData);

@@ -47,9 +47,12 @@ const dayTimes = times?.[day] || [];
 
   if(isForUpdation)
   {
-    bookedTime = unavailableTimes?.filter(item => item.time == defaultTime)
+    let bookedTime = unavailableTimes?.filter(item => item.time == defaultTime)
 
-    availableTimes?.push(bookedTime)
+    console.log("bookedTime: ", bookedTime);
+    
+
+    bookedTime.length > 0 ? availableTimes?.push(bookedTime[0]) : null
 
   }
 

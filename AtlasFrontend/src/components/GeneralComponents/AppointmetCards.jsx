@@ -1,5 +1,6 @@
 import { Clock3, Plus, UserRoundCheck } from "lucide-react"
 import React from "react"
+import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
 
@@ -14,7 +15,14 @@ export function AppointmentCards(
     isBookingButtonShow = false
   }) {
 
-    const navigate = useNavigate()
+  const navigate = useNavigate()
+
+  const
+    {
+      userData,
+    }
+    = useSelector(state => state.userReducer.userInfo)
+      
   return (
     <section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm xl:col-span-2">
       <div className="flex items-center justify-between border-b border-gray-100 p-5">
@@ -103,18 +111,30 @@ export function AppointmentCards(
                   <div>
                     <br />
                     <div className="flex justify-end">
-                      <button
-                        onClick={() => navigate("/book-appointment", {state: {userProfile: 
-                        {
-                          _id: appointment?._id, 
-                          doctorId: appointment?.doctor?._id,
-                          fullName: appointment?.generalPatientInfo?.patientName,
-                          email: appointment?.generalPatientInfo?.email,
-                          cellNo: appointment?.generalPatientInfo?.cellNo,
-                          forSession: appointment?.forSession
-                        }}})}
-                        type="button"
-                        className="
+                      <div className="flex justify-between gap-5">
+                        <button
+                          onClick={() => navigate("/update-appointment", {
+                            state:
+                            {
+                              appointmentId: appointment._id,
+                              fullName: appointment.generalPatientInfo?.patientName,
+                              email: appointment.generalPatientInfo?.email,
+                              cellNo: appointment.generalPatientInfo?.cellNo,
+                              diagnoses: appointment.diagnoses,
+                              doctor: appointment.doctor?._id,
+                              time: appointment.times.time,
+                              day: new Date(appointment.times?.date).toLocaleDateString("en-US", { weekday: "long" }).toLowerCase(),
+                              paymentStatus: appointment.paymentStatus,
+                              treatmentStatus: appointment.status,
+                              paid: appointment.paymentSection?.paid,
+                              payable: appointment.paymentSection?.payable,
+                              forSession: appointment.forSession,
+                              updationTime: appointment.times?.timeOfUpdation,
+                              role: userData?.role
+                            }
+                          })}
+                          type="button"
+                          className="
                             inline-flex items-center justify-center gap-2
                             px-4 py-2.5
                             rounded-xl
@@ -130,10 +150,46 @@ export function AppointmentCards(
                             focus:ring-emerald-200
                             transition
                           "
-                      >
-                        <Plus size={18} />
-                        Book Appointment
-                      </button>
+                        >
+                          <Plus size={18} />
+                          Update/Edit
+                        </button>
+                        <button
+                          onClick={() => navigate("/book-appointment", {
+                            state: {
+                              userProfile:
+                              {
+                                _id: appointment?._id,
+                                doctorId: appointment?.doctor?._id,
+                                fullName: appointment?.generalPatientInfo?.patientName,
+                                email: appointment?.generalPatientInfo?.email,
+                                cellNo: appointment?.generalPatientInfo?.cellNo,
+                                forSession: appointment?.forSession
+                              }
+                            }
+                          })}
+                          type="button"
+                          className="
+                            inline-flex items-center justify-center gap-2
+                            px-4 py-2.5
+                            rounded-xl
+                            bg-emerald-700
+                            text-white
+                            text-sm font-semibold
+                            shadow-sm
+                            hover:bg-emerald-800
+                            active:bg-emerald-900
+                            active:scale-[0.98]
+                            focus:outline-none
+                            focus:ring-2
+                            focus:ring-emerald-200
+                            transition
+                          "
+                        >
+                          <Plus size={18} />
+                          Book Appointment
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )
